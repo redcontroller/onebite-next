@@ -9,7 +9,9 @@
 - 이번 시간에 우리는 Next.js의 페이지 라우터에서 제공하는 다양한 기능을 사용하여 정적, 동적, 범용적인 경로 그리고 없는 경로에까지 대응하는 페이지를 만들어 본다.
 - 동적 경로 (Dynamic Routes): 경로 상에 변할 수 있는 가변적인 값을 포함하고 있는 경로
 
-> Page Router 이미지
+  <img width='800px' src='https://github.com/user-attachments/assets/ef6b8b54-a000-40f3-b7d9-6c80b011f059'>
+  
+  > Page Router 이미지
 
 - import alias: 절대 경로로 모듈을 import 할 수 있도록 도와주는 기능. 경로가 복잡해지더라도 해당 구문을 사용하면 더 간결할하게 작성할 수 있다.
 
@@ -48,7 +50,9 @@
 - Next.js에서는 특별히 이런 식으로 설정되어 있는 경로를 모든 경로를 다 잡아채겠다는 의미로, Catch All Segment (구간)라고 부른다.
 - `Catch All Segment` 형태로 설정되어 있는 URL 파라미터들은 컴포넌트의 라우터 객체에 배열식으로 저장이 된다.
 
-> 배열형태로 저장되는 URL 파라미터들
+  <img width='800px' src='https://github.com/user-attachments/assets/ad349075-0928-4195-b932-8d073010cf5a'>
+  
+  > 배열형태로 저장되는 URL 파라미터들
 
 - Catch All Segment로도 대응할 수 없는 경로가 있다. 그것은 URL 파라미터가 아무것도 없는 상태의 경로이다 (/book 으로 끝나는 경우).
 - 이러한 경우 두가지 방식으로 대응할 수 있는데 같은 book 경로에 index.tsx 파일을 생서해주던지, 범용적으로 book 이후 어떤 경로가 나오든 안 나오든 대응이 가능한 방법을 사용하는 것이다.
