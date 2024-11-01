@@ -102,7 +102,6 @@
 
   <img width='800px' src='https://github.com/user-attachments/assets/6fd4c962-877e-4cca-91e7-ed47952cb403'>
 
-
   > 페이지 이동 시에 발생하는 Next.js 프리패칭
 
 - 최종적으로 초기 접속 요청 시에 하이드레이션을 더 빠르게 처리할 수 있도록 만들어 주면서도 동시에 프리패칭을 통해서 초기 접속 요청 이후에 페이지 이동까지 빠르게 처리할 수 있는 두마리 토기를 다 잡는 방식으로 동작한다.
@@ -111,7 +110,6 @@
 
   <img width='800px' src='https://github.com/user-attachments/assets/ccd81b3f-31d6-4d1e-946c-fd1c1111eb47'>
 
-
   > 빌드를 실행하면 페이지별 분리된 JS Bundle 용량 확인 가능
 
 - 프로덕션 모드로 실행한 뒤 index 경로에 두면, Link 태그를 통해서 프리패칭된 굉장히 많은 네트워크 요청을 확인할 수 있다.
@@ -119,7 +117,7 @@
 - 간혹 페이지에 대한 JS 코드를 다시 불러오는 네트워크 로그을 확인할 수 있다. 그것은 캐시가 만료되었기 때문에 다시 불러온 것라서 기본적인 프리패칭은 그대로 이루어진다라고 생각하면 된다.
 
   <img width='800px' src='https://github.com/user-attachments/assets/d36d0032-eee7-4d75-abe1-9ce0f36fc9ff'>
-  
+
   > 브라우저 네트워크 탭에서 프리패칭 확인
 
 - 기본적으로 Link 컴포넌트로 명시된 경로가 아니라면 프리패칭이 이루어지지 않는다.
@@ -205,3 +203,39 @@ export default function Home() {
   <img width='800px' src='https://github.com/user-attachments/assets/65dc8593-46b9-4bfa-95c2-68694a91aa07'>
 
   > CSS Module을 사용해 변환된 유니크한 className
+
+## 글로벌 레이아웃 설정하기
+
+- 모든 페이지에 적용되는 글로벌 레이아웃을 적용할 때에는 root 컴포넌트인 App 컴포넌트에 페이지를 감싸는 형태로 적용해주면 된다.
+- 레이아웃을 구성하는 코드가 너무 길어지게 되면 코드 가독성이 안좋아지기 때문에 보통은 글로벌 레이아웃을 위한 컴포넌트를 통해 코드를 분리한다.
+
+## 페이지별 레이아웃 설정하기
+
+- 컴포넌트 메서드 .getLayout를 페이지를 매개변수로 받아서 별도의 Layout 컴포넌트로 감싸서 return 해주는 형태를 가지도록 정의한다.
+- JavaScript의 [모든 함수는 객체](https://reactjs.winterlood.com/0f33b159-6b19-433b-8db4-68d6b4a122e0)이기 때문에 메서드를 추가할 수 있다.
+- 페이지 역할을 하는 컴포넌트에 별도의 메서드를 추가해두면 App 컴포넌트에서 전달을 받았을 때 꺼내서 사용할 수 있다.
+- 이렇게 페이지 별로 개별 Layout을 적용하고 싶다면, Layout을 적용하는 메서드를 컴포넌트에 추가해서 App 컴포넌트에 넘겨주면 된다.
+- 문제점은 하위 페이지에 대해서는 getLayout 메서드가 정의되어 있지 않기 때문에 아래와 같은 에러가 발생한다.
+
+```bash
+TypeError: getLayout is not a function
+```
+
+- 문제점을 해결하기 위해 예외처리와 함께 타입 문제를 해결한 코드는 아래와 같다.
+
+```typescript
+type NextPageWithLayout = NextPage & {
+  getLayout?: (page: ReactNode) => ReactNode;
+};
+
+export default function App({
+  Component,
+  pageProps,
+}: AppProps & { Component: NextPageWithLayout }) {
+  const getLayout = Component.getLayout ?? ((page: ReactNode) => page);
+
+  return <GlobalLayout>{getLayout(<Component {...pageProps} />)}</GlobalLayout>;
+}
+```
+
+## 한입북스 UI 구현하기
