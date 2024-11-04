@@ -1,11 +1,33 @@
+import MovieItem from '@/components/movie-item';
 import SearchBarLayout from '@/components/searchBarLayout';
-import { useRouter } from 'next/router';
 import { ReactNode } from 'react';
+import style from './index.module.css';
+import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
+import fetchMovies from '@/lib/fetch-movies';
 
-export default function Page() {
-  const router = useRouter();
-  const { q } = router.query;
-  return <h1>검색 결과: {q}</h1>;
+export const getServerSideProps = async (
+  context: GetServerSidePropsContext
+) => {
+  const q = context.query.q;
+  const movies = await fetchMovies(q as string);
+
+  return {
+    props: {
+      movies,
+    },
+  };
+};
+
+export default function Page({
+  movies,
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  return (
+    <div className={style.container}>
+      {movies.map((movie) => (
+        <MovieItem key={`search-${movie.id}`} {...movie} />
+      ))}
+    </div>
+  );
 }
 
 Page.getLayout = (page: ReactNode) => {
