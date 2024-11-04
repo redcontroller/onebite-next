@@ -46,7 +46,7 @@
 - URL 파라미터도 query 스트링과 같은 방식으로 라우터 객체에 저장된다.
 - 파라미터가 id를 key로 하여 저장되어 있는 이유는 앞서 Page에 대응하는 이름을 정할 때 [id].tsx 라는 이름으로 만들어 두었기 때문이다.
 - 현재는 `/book/123` 이런 식의 바로 아래 경로에만 대응하지만 그 하위로 `/book/1/12/213/23/13` 식의 경로에도 대응하려면 [...id].tsx 형태로 변경해주면 된다.
-- `...`은 book이라는 경로 뒤에 여러개의 id가 연달아 들어올 있고 그러한 모든 id에 다 대응하겠다는 것을 의미한다.
+- `...`은 book이라는 경로 뒤에 여러개의 id가 연달아 들어올 수 있고 그러한 모든 id에 다 대응하겠다는 것을 의미한다.
 - Next.js에서는 특별히 이런 식으로 설정되어 있는 경로를 모든 경로를 다 잡아채겠다는 의미로, Catch All Segment (구간)라고 부른다.
 - `Catch All Segment` 형태로 설정되어 있는 URL 파라미터들은 컴포넌트의 라우터 객체에 배열식으로 저장이 된다.
 
@@ -238,4 +238,169 @@ export default function App({
 }
 ```
 
-## 한입북스 UI 구현하기
+# 사전 렌더링과 데이터 페칭
+
+## (복습) React App 에서의 데이터 페칭
+
+1. 불러온 데이터를 보관할 State 생성
+2. 데이터 페칭 함수 생성
+3. 컴포넌트 마운트 시점에 fetchData 호출
+4. 데이터 로딩중일때의 예외처리
+
+```jsx
+export default function Page() {
+  const [state, setState] = useState();
+
+  const fetchData = async () => {
+    const response = await fetch('...');
+    const data = await response.json();
+
+    setState(data);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  if (!state) return 'Loading...';
+
+  return <div>...</div>;
+}
+```
+
+- 이 방식의 단점: 초기 접속 요청부터 데이터 로딩까지 오랜 시간이 걸림
+- 백엔드 서버에 데이터 요청을 보내는 시점이 3번 시점인 컴포넌트가 마운트 되는 시점에 발생하기 때문이다. 에초에 데이터 요청 자체가 늦게 시작하는 것.
+
+> React App에서의 데이터 페칭
+
+- Next.js 에서는 사전 렌더링을 인해 위와 같은 단점을 해결한다.
+- 추가로 사전 렌더링을 진행하는 과정에서 백엔드에서 현재 페이지에 필요한 데이터를 미리 불러오도록 설정까지 가능하다. 그렇기 때문에 앞서 살펴봤었던 리액트 앱에서의 데이터 페이칭보다 훨씬 빠른 타이밍에 서버로부터 데이터를 요청하고 불러올 수 있게 된다.
+- 그로인해 서버가 브라우저에게 전달하는 '렌더링 된 HTML' 파일에는 이미 백엔드 서버로부터 불러온 데이터들이 다 포함되어 있을테니, 결국 사용자에게 데이터 패칭이 이미 완료된 페이지를 추가적인 로딩 없이 바로 보여줄 수 있다.
+
+> React와 Next App의 데이터 페칭 요약 정리
+
+## Next.js의 다양한 사전 렌더링
+
+- 의문점: Next App 에서 서버 요청의 지연으로 사전 렌더링이 오래 걸리는 경우에는 차라리 React App에서 처럼 로딩 바라도 보여주는 게 좋지 않을까?
+- 그러한 경우는 특별히 해당 페이지의 경우에만 빌드 타입에 미리 사전 렌더링을 미리 다 끝내도록 설정한다던가 등의 다양한 사전 렌더링 방식을 제공하고 있다.
+
+> 데이터 페칭이 오래 걸리는 경우 대처법 (빌드타임에서의 사전 렌더링)
+
+1. **서버사이드 렌더링 (SSR)**
+   - 가장 기본적인 사전 렌더링 방식
+   - 요청일 들어올 때마다 사전 렌더링을 진행함
+2. **정적 사이트 생성 (SSG)**
+   - 빌드 타임에 미리 페이지를 사전 렌더링 해 둠
+3. **증분 정적 재생성 (ISR)**
+   - 향후에 다룰 사전 렌더링 방식
+
+## SSR 서버 사이드 렌더링
+
+- SSR (Server Side Rendering)은 가장 기본적인 사전 렌더링 방식
+- 요청이 들어올 때 마다 사전 렌더링을 진행함
+
+## getServerSideProps 함수
+
+```typescript
+export const getServerSideProps = async () => {
+  return {
+    props: {},
+  };
+};
+```
+
+- 역할: (1) 브라우저를 통해 페이지 경로로 요청이 들어오게 되어 Next 서버가 사전 렌더링을 하게 될 때, (3) 컴포넌트보다 (2) 먼저 실행이 되어서 인덱스 페이지 컴포넌트에 필요한 데이터를 또 다른 백엔드 서버로부터 불러온다던가 하는 기능을 하게 되는 함수
+- 즉, 컴포넌트보다 먼저 실행되어서, 컴포넌트에 필요한 데이터를 불러오는 함수
+- 반드시 getServerSideProps 함수의 `리턴값은 props`라는 객체 프로퍼티를 포함하는 단 하나의 객체여야 한다.
+- 그래야만 Next App이 Props 객체를 읽어와서 페이지 역할을 하는 컴포넌트에게 전달해 줄 수 있기 때문이다.
+- 일종의 프레임워크의 강제적인 문법이라고 생각하면 된다.
+- 주의할 점은, getServerSideProps 함수는 사전 렌더링을 하는 그 과정에서 딱 한 번만 실행될 것이기 때문에 오직 서버 측에서만 실행되는 함수이다.
+- 컴포넌트는 총 두 번 실행이 된다.
+  - (1) 브라우저로부터 접속 요청ㅇ르 받았을 때 사전 렌더링을 위해서 먼저 서버 측에서 한번 컴포넌트가 실행
+  - (2) JS Bundle 형태로 전달되어 브라우저 측에서 하이드레이션 과정이 진행이 될 때 한 번 더 실행
+- 그렇기 때문에 페이지를 보여주는 컴포넌트에 console.log를 찍어보면 터미널에서 한 번, 브라우저 콘솔 창에서 한 번으로 총 두 번 출력된다.
+- 요점은 컴포넌트들 또한 서버에서 한 번은 실행되므로 당연히 페이지 컴포넌트 안에서도 어떠한 조건도 없이 `window` 객체를 호출할 수 없다. (오류 발생)
+- 서버에서 실행될 때는 `window` 객체는 `undefined`가 된다.
+
+## 브라우저 측에서만 실행되는 코드 작성
+
+- 여러가지 방법이 있지만, 가장 쉬운 방법은 `useEffect`를 사용하는 것이다.
+- 이렇게 하면 서버에서는 실해되지 않는다. 왜냐하면 조건 자체가 애초에 컴포넌트가 마운트된 이후, 다시말해 화면에 나타난 이후에 실행되는 함수를 만드는 곳이기 때문에 서버 측에서는 실행되지 않고 오직 브라우저에서만 실행된다.
+
+## getServerSideProps 함수로 전달받은 타입의 정의
+
+- 대부분의 타입 정의들은 사실 Next.js에서 제공하는 것들만 이용해서도 거의 다 가능하다.
+- InferGetServerSidePropsType: getServerSideProps 함수의 반환값 타입을 자동으로 추론해주는 기능을 하는 내장 타입. 제네릭으로 함수 이름을 넣어주면 된다.
+
+```tsx
+export const getServerSideProps = () => {
+  // 컴포넌트보다 먼저 실행되어서, 컴포넌트에 필요한 데이터를 불러오는 함수
+  const data = 'hello';
+
+  return {
+    props: {
+      data,
+    },
+  };
+};
+
+export default function Home(
+  props: InferGetStaticPropsType<typeof getServerSideProps>
+) {
+  console.log(props);
+
+  return ( ... );
+}
+```
+
+## 병렬로 비동기 함수를 fetch 하기
+
+- (수정 전) 직렬로 동작하는 비동기 함수 2개
+
+  ```typescript
+  export const getServerSideProps = async () => {
+    const allBooks = await fetchBooks();
+    const recoBooks = await fetchRandomBooks();
+    ...
+  };
+  ```
+
+- (수정 후) 병렬로 동작하는 비동기 함수
+- 병렬로 API Request가 동시에 발동이 되기 때문에 더 빠르게 페이지가 렌더링된다.
+
+  ```typescript
+  export const getServerSideProps = async () => {
+    // 인수로 전달한 배열 안에 들어있는 모든 비동기 함수들을 동시에 실행을 시켜주는 함수
+    const [allBooks, recoBooks] = await Promise.all([
+      fetchBooks(),
+      fetchRandomBooks(),
+    ]);
+    ...
+  };
+  ```
+
+## 쿼리스트링 값을 읽어오기
+
+- 브라우저 주소창에 있는 쿼리 매개변수를 읽기 위해서 `getServerSideProps` 함수에서 context 객체를 사욯할 수 있다.
+- context라는 매개변수에는 현재 브라우저로부터 받은 요청에 대한 모든 정보가 들어 있다.
+- 콘솔에 찍어보면 많은 정보 가운데서 하단에 query 객체를 가지고 있음을 확인할 수 있다.
+
+  ```typescript
+  export const getServerSideProps = async (
+    context: GetServerSidePropsContext
+  ) => {
+    const q = context.query.q;
+    const books = await fetchBooks(q as string);
+    return {
+      props: { books },
+    };
+  };
+  ```
+
+  > context 객체에 들어있는 query 객체
+
+## URI Params 값 읽어오기
+
+- 브라우저 주소창의 파라미터를 읽어오기 위해서 쿼리스트링을 읽어왔던 방식과 같이 `getServerSideProps`함수를 사용한다.
+- URI Parameter 정보는 context 객체의 params 객체 안에 담겨있다.
+-
