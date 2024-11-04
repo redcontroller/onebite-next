@@ -271,20 +271,33 @@ export default function Page() {
 - 이 방식의 단점: 초기 접속 요청부터 데이터 로딩까지 오랜 시간이 걸림
 - 백엔드 서버에 데이터 요청을 보내는 시점이 3번 시점인 컴포넌트가 마운트 되는 시점에 발생하기 때문이다. 에초에 데이터 요청 자체가 늦게 시작하는 것.
 
-> React App에서의 데이터 페칭
+  <img width='800px' src='https://github.com/user-attachments/assets/45d27e0b-c0cb-45f3-b880-52666cc8d98e' />
+  <img width='800px' src='https://github.com/user-attachments/assets/15afc70c-789f-48c5-bc37-7e5ae713e9e8' />
+
+  > React App에서의 데이터 페칭
 
 - Next.js 에서는 사전 렌더링을 인해 위와 같은 단점을 해결한다.
+
+  <img width="800px" src='https://github.com/user-attachments/assets/829473b6-12bc-4d80-a0c6-027c6055bbf5' />
+
+  > Next App에서의 데이터 페칭
+
 - 추가로 사전 렌더링을 진행하는 과정에서 백엔드에서 현재 페이지에 필요한 데이터를 미리 불러오도록 설정까지 가능하다. 그렇기 때문에 앞서 살펴봤었던 리액트 앱에서의 데이터 페이칭보다 훨씬 빠른 타이밍에 서버로부터 데이터를 요청하고 불러올 수 있게 된다.
 - 그로인해 서버가 브라우저에게 전달하는 '렌더링 된 HTML' 파일에는 이미 백엔드 서버로부터 불러온 데이터들이 다 포함되어 있을테니, 결국 사용자에게 데이터 패칭이 이미 완료된 페이지를 추가적인 로딩 없이 바로 보여줄 수 있다.
 
-> React와 Next App의 데이터 페칭 요약 정리
+  <img width="800px" src='https://github.com/user-attachments/assets/a77d7586-c96f-4510-9cb6-0752e2eb2e38' />
+
+  > React와 Next App의 데이터 페칭 요약 정리
 
 ## Next.js의 다양한 사전 렌더링
 
 - 의문점: Next App 에서 서버 요청의 지연으로 사전 렌더링이 오래 걸리는 경우에는 차라리 React App에서 처럼 로딩 바라도 보여주는 게 좋지 않을까?
 - 그러한 경우는 특별히 해당 페이지의 경우에만 빌드 타입에 미리 사전 렌더링을 미리 다 끝내도록 설정한다던가 등의 다양한 사전 렌더링 방식을 제공하고 있다.
 
-> 데이터 페칭이 오래 걸리는 경우 대처법 (빌드타임에서의 사전 렌더링)
+  <img width="800px" src='https://github.com/user-attachments/assets/b83a76d7-3725-4d63-b962-74deca582101'/>
+  <img width="800px" src='https://github.com/user-attachments/assets/a6572952-1883-449e-9332-1f91612f58f1'/>
+
+  > 데이터 페칭이 오래 걸리는 경우 대처법 (빌드타임에서의 사전 렌더링)
 
 1. **서버사이드 렌더링 (SSR)**
    - 가장 기본적인 사전 렌더링 방식
@@ -384,7 +397,6 @@ export default function Home(
 - 브라우저 주소창에 있는 쿼리 매개변수를 읽기 위해서 `getServerSideProps` 함수에서 context 객체를 사욯할 수 있다.
 - context라는 매개변수에는 현재 브라우저로부터 받은 요청에 대한 모든 정보가 들어 있다.
 - 콘솔에 찍어보면 많은 정보 가운데서 하단에 query 객체를 가지고 있음을 확인할 수 있다.
-
   ```typescript
   export const getServerSideProps = async (
     context: GetServerSidePropsContext
@@ -396,6 +408,7 @@ export default function Home(
     };
   };
   ```
+  <img width="800px" src='https://github.com/user-attachments/assets/07ad97d9-82c3-4f89-903e-8f64f64c0048' />
 
   > context 객체에 들어있는 query 객체
 
@@ -403,4 +416,15 @@ export default function Home(
 
 - 브라우저 주소창의 파라미터를 읽어오기 위해서 쿼리스트링을 읽어왔던 방식과 같이 `getServerSideProps`함수를 사용한다.
 - URI Parameter 정보는 context 객체의 params 객체 안에 담겨있다.
--
+  ```typescript
+  export const getServerSideProps = async (
+    context: GetServerSidePropsContext
+  ) => {
+    const id = context.params!.id;
+    const book = await fetchOneBook(Number(id));
+  
+    return {
+      props: { book },
+    };
+  };
+  ```
