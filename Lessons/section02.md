@@ -397,6 +397,7 @@ export default function Home(
 - 브라우저 주소창에 있는 쿼리 매개변수를 읽기 위해서 `getServerSideProps` 함수에서 context 객체를 사욯할 수 있다.
 - context라는 매개변수에는 현재 브라우저로부터 받은 요청에 대한 모든 정보가 들어 있다.
 - 콘솔에 찍어보면 많은 정보 가운데서 하단에 query 객체를 가지고 있음을 확인할 수 있다.
+
   ```typescript
   export const getServerSideProps = async (
     context: GetServerSidePropsContext
@@ -408,6 +409,7 @@ export default function Home(
     };
   };
   ```
+
   <img width="800px" src='https://github.com/user-attachments/assets/07ad97d9-82c3-4f89-903e-8f64f64c0048' />
 
   > context 객체에 들어있는 query 객체
@@ -416,15 +418,235 @@ export default function Home(
 
 - 브라우저 주소창의 파라미터를 읽어오기 위해서 쿼리스트링을 읽어왔던 방식과 같이 `getServerSideProps`함수를 사용한다.
 - URI Parameter 정보는 context 객체의 params 객체 안에 담겨있다.
+
   ```typescript
   export const getServerSideProps = async (
     context: GetServerSidePropsContext
   ) => {
     const id = context.params!.id;
     const book = await fetchOneBook(Number(id));
-  
+
     return {
       props: { book },
     };
   };
   ```
+
+## 두 번째 사전 렌더링 방식: SSG 정적 사이트 생성
+
+- SSR(서버사이드렌더링)은 매번 새롭게 사전 렌더링을 진행하기 때문에 데이터도 매번 새롭게 다시 불러와서 페이지 내부의 데이터를 항상 최신으로 유지할 수 있다는 큰 장점이 있음
+- 반면에 데이터 요청이 늦어지게 될 경우에 사용자의 요청에 응답하는 속도가 함께 느려진다는 치명적인 단점도 존재
+
+  > SSR 방식의 장단점
+
+- SSG(Static Site Generation, 정적 사이트 생성)는 SSR의 치명적인 단점을 해결하는 새로운 사전 렌더링 방식
+- 빌드 타임에 페이지를 미리 사전 렌더링 해 둠
+- 브라우저가 접속 요청을 보내게 되면 Next.js 서버는 빌드 타입에 미리 만들어 두었던 페이지(미리 사전 렌더링을 마친 페이지)를 지체없이 매우 빠른 속도록 바로 응답하게 된다.
+
+  > SSG 동작 방식
+
+- SSG는 이런 방식으로 동작하기 때문에 빌드 타입에 일어나는 사전 렌더링 과정에서 백엔드 서버에게 데이터를 불러와야 하는 과정이 추가로 필요하다고 하더라도, 또 그 과정이 특정 상황으로 인해서 또 매우 오래 걸리게 된다고 하더라도 사용자의 경험에는 아무런 영향을 미치지 않는다.
+- 왜냐하면 모든 상황들은 서버가 가동되기 이전인 빌드 타입에만 일어나는 상황이기 때문이다.
+- SSG의 단점은 다시는 페이지를 새롭게 (사전 렌더링) 생성 하지 않기 때문에 우리가 접속 요청을 보내게 되더라도 매번 똑같은 페이지만 응답한다. 결국 최신 데이터를 반영하기는 어렵다.
+- 그래서 SSG 방식은 최신 데이터가 빠르게 반영되어야 하는 페이지들 보다는 데이터가 자주 업데이트 되지 않는 정적 페이지들에 훨씬 적합한 사전 렌더링 방식이다.
+
+  > SSG의 장단점
+
+## SSG 정적 경로에 적용하기
+
+- 페이지 파일 안에 getServerSideProps 함수를 만들어서 export 해주면, 해당 파일이 담당하는 페이지는 SSR 방식으로 동작하게 된다.
+- 특정 페이지를 SSG 방식으로 작동시키는 방법도 비슷하다. `getServerSideProps`를 `getStaticProps`로 바꿔주기만 하면 된다.
+- `getStaticProps`는 `getServerSideProps` 함수와 동일하게 사전 렌더링 과정에서 필요한 데이터를 불러오고, props라는 프로퍼티를 포함하는 객체를 내보내 컴포넌트에게 전달하는 역할을 해줄 수 있다.
+- 타입도 `getStaticProps`에 맞춰서 바꿔주면 된다.
+
+```tsx
+export const getStaticProps = async () => {
+  const [allBooks, recoBooks] = await Promise.all([
+    fetchBooks(),
+    fetchRandomBooks(),
+  ]);
+
+  return {
+    props: {
+      allBooks,
+      recoBooks,
+    },
+  };
+};
+
+export default function Home({
+  allBooks,
+  recoBooks,
+}: InferGetStaticPropsType<typeof getStaticProps>) {
+  return ( ... );
+}
+```
+
+- 그런데 SSG 방식으로 변경한 뒤에 페이지를 새고로침 해보면 SSR 방식처럼 요청이 들어올 때마다 새롭게 사전 렌더링이 진행되고 있다. 이유는 현재 Next App을 개발 모드로 실행하고 있기 때문이다. Next App의 개발 모드는 더 편리한 개발을 위해서 개발자들이 코드를 수정했을 때 수정 결과가 설정해둔 사전 렌더링 방식이 SSG던 아니면 SSR이던 뭐든지 바로바로 반영할 수 있도록 해두었다.
+- 진짜 SSG 방식의 동작을 확인하려면 프로젝트를 개발 모드를 중단한 다음 빌드해서 프로덕션 모드로 실행하면 된다.
+- Next App을 빌드했을 터미널에 출력되는 기호의 의미를 살펴보면 아래와 같다.
+
+  - 흰색 동그라미: 페이지가 SSG로 동작하고, HTML로 사전 렌더링 된 페이지다.
+  - function 기호: 다이나믹 페이지임을 의미한다. 주문형 (on demand)의 의미는 브라우저에게 요청을 맏을 때마다 다이나믹하게 페이지가 계속해서 사전 렌더링된다는 것.
+  - 빈 동그라미: 흰색 동그라미와 같이 정적 페이지인데, 해당 페이지에는 `getStaticProps`를 설정해 두지 않았기 때문에 기본 값으로서 설정이 된 정적 페이지(SSG)라는 것.
+
+  > 빌드 결과
+
+- `getStaticProps` 함수를 사용한 인덱스 페이지에만 흰색 동그라미 기호(SSG)가 붙어 있음을 확인할 수 있다.
+- API Routes에도 다이나믹 페이지 기호(SSG)가 붙어 있는 것을 확인할 수 있는데, Next.js가 기본적으로 API Routes들을 다이나믹하게 작동하도록 설정해 두었기 때문이다.
+- `/404`, `/test`와 같은 페이지는 따로 아무런 설정을 해주지 않았음에도 기본값으로 정적인 페이지로 빌드타임에 미리 사전 렌더링하도록 설정한다. 그래서 기본 값은 SSG와 동일하게 동작한다고 이해하면 된다.
+- 이를 통해 알 수 있는 점은 SSG를 설정하는 getStaticProps도 없고, SSR을 설정하는 getServerSideProps도 없다면 기본적으로 SSG 페이지로 설정된다고 이해하면 된다. (**Default 사전 렌더링 방식 - SSG**)
+- 프로덕트 환경에서 실행은 `npm run start`이다.
+- SSG 방식을 동작하는 페이지는 굉장히 빠른 속도로 화면에 렌더링이 됨을 확인할 수 있으며, 아무리 새로고침을 눌러서 브라우저에서 서버로 계속해서 요청을 보낸다고 하더라도 인덱스 페이지 (SSG 방식으로 빌드 이후에는 다시 생성되지 않도록 설정)에서 서버측 로그에는 아무런 메시지도 출력되지 않는다. (console.log 찍어둔게 있어도)
+
+## SSG 페이지에서 query
+
+- `getStaticProps` 함수에게 전달되는 `GetStaticPropsContext` 타입의 context라는 매개변수에는 쿼리 스트링을 포함하고 있는 쿼리 프로퍼티가 존재하지 않는다.
+- 이유는 빌드 타입에 딱 한 번만 실행되는 SSG 페이지에서는 쿼리스트리링을 알 수 없다.
+- 쿼리스트링이라는 건 사용자가 입력한 검색어라던가 아니면 리스트의 정렬 기준이라던가 그런 것들이 전달되는 공간이기 때문에 결론적으로 이 쿼리스트링에 어떠한 값이 들어올지는 빌드 타임에 이 `GetStaticProps` 함수 안에서 알아낼 방법은 없다.
+- 그렇기 때문에 빌드 타입에 딱 한 번만 실행되는 이 GetStaticProps 함수에서는 context 객체에서 쿼리스트링을 꺼내올 수 없다.
+
+  > query 프로퍼티가 존재하지 않는 GetStaticPropsContext 타입
+
+- 결과적으로 검색 페이지는 SSG 방식으로 동작시킬 수 없다. 엄밀히 말해 쿼리스트링을 꺼내올 수 없기 떄문에 SSG 방식으로는 검색 결과를 서버로부터 불러오는 동작은 수행할 없다.
+- 제약사항들이 있음에도 Search 페이지를 SSG 방식으로 동작시키길 원한다면, 쿼리스트링을 꺼내와서 해당 값을 기준으로 검색 결과 데이터를 불러오는 과정을 사전 렌더링 과정 이후에 페이지 역할을 하는 컴포넌트(클라이언트 측)에서 직접 진행하는 방식으로 구현하면 된다. 즉, React 앱에서 했던 방식대로 데이터 패칭을 진행한다.
+- Search 페이지는 이제 getStaticProps와 getServerSideProps 함수가 모두 없어졌기 때문에 기본적으로 SSG 방식으로 동작하게 된다. SSG 방식으로 동작하게 되지만 쿼리스트링으로 전달되는 검색어를 빌드 타입에는 알 수 없기 때문에 사전 렌더링 과정에서는 결국 이 페이지의 div 태그의 레이아웃 정도만 렌더링하게 되고 난 뒤 컴포넌트가 마운트된 이후에 클라이언트 사이드 측, 즉 브라우저에서 컴포넌트가 실행되면서 직접 쿼리스트링 검색어를 불러와서 검색 결과 데이터를 클라이언트 사이드 측에서 렌더링하게 되는 방식으로 동작한다.
+- `npm run build`를 해보면 이제 동그라미로 설정이 되면서 SSG 방식으로 동작하도록 설정이 된 것을 볼 수 있다.
+
+  > SSG로 바뀐 Search 페이지
+
+- 프로덕션 모드로 실행하고 난 뒤 브라우저 검색 페이지의 네트워크 탭에서 새로고침을 한번 해주면 넥스트 서버 측에서 보내주는 파일을 확인할 수 있는데, 그 중에 가장 처음으로 보내주게 되는 사전 렌더링 결과인 HTML 파일을 클릭해서 열어보면 검색 결과 데이터는 제외하고 나머지 부분만 렌더링해서 브라우저에게 보내주는 걸 볼 수 있다.
+
+> 사전 렌더링된 빈 HTML 파일
+
+- 정리하면, 인덱스 페이지처럼 사전 렌더링을 할 때 빌드 타임에 데이터를 불러오게 하고면싶다면 `getStaticProps` 함수를 사욯하면 된다. 만약에 서치 페이지처럼 쿼리스트리링을 사용하기 때문에 빌드 타임에는 데이터를 미리 불러올 수 없는 페이지라면 해당 데이터를 리액트 앱에서 (클라이언트 사이드 측에서) 직접 패칭해서 불러오도록 설정하는 것도 가능하다.
+
+## SSG 동적 경로에 적용하기
+
+- 아래와 같이 getStaticProps 속성을 주어 동적 페이지를 SSR에서 SSG로 변경할 수 있다.
+
+```typescript
+// /book/[id].tsx
+export const getStaticProps = async (context: GetStaticPropsContext) => {
+  const id = context.params!.id;
+  const book = await fetchOneBook(Number(id));
+
+  return {
+    props: { book },
+  };
+};
+
+export default function Page({
+  book,
+}: InferGetStaticPropsType<typeof getStaticProps>) {
+  ...
+};
+```
+
+- 동적인 페이지에서는 getStaticPaths가 필요하다.
+
+  > Server Error 메시지
+
+- Next 앱의 북페이지처럼 동적 경로를 갖도록 설정된 페이지에 SSG를 적용하기 위해서는 사전 렌더링 이전에 해당 페이지에 있는 모든 경로들을 직접 설정하는 작업을 선수로 진행 해주어야 한다. 빌드타임에 어떤 경로들이 존재할 수 있는지 설정하는 작업이 꼭 필요하기 때문이다.
+- 이 과정에서 백엔드 서버로부터 현재 DB에 등록된 도서들의 아이디 목록을 받아온다던지, 아니면 우리가 임의로 몇 개의 아이디를 설정하게 되면 그 다음 과정인 사전 렌더링 과정에서는 이러한 경로들에 해당하는 모든 페이지들을 각각 다 생성하게 된다.
+- 그리고 나서 빌드가 종료된 이후에 브라우저가 `/book/1` 페이지로 접속을 요청하면 앞서 만들어 두었었던 `/book/1` 페이지를 전달해주는 것이다.
+- 경로를 설정하는 함수가 앞서 Error 메시지에 살펴봤던 getStaticPaths라는 함수이다.
+
+  > 동적 경로의 SSG 작동 방식
+
+- 정리하면, `getStaticPaths`라는 함수를 호출해서 연재 이 페이지에 존재할 수 있는 경로들을 먼저 설정한 다음에 해당 페이지들을 `getStaticProps` 함수를 일일이 한 번씩 다 호출해서 사전에 여러 개의 페이지를 렌더링하는 방식으로 동작시켜야 된다.
+- 참고로 `getStaticPaths` 함수의 return 값인 paths 객체의 URL 파라미터의 값은 반드시 문자열로만 명시를 해주어야 Next가 정상적으로 경로들을 읽어올 수 있다. (프레임워크의 문법)
+
+```typescript
+export const getStaticPaths = () => {
+  return {
+    paths: [
+      { params: { id: '1' } },
+      { params: { id: '2' } },
+      { params: { id: '3' } },
+    ],
+    fallback: false,
+  };
+};
+```
+
+- `npm run build`로 빌드를 해보면 `.next/server/book`폴더 아래 정적으로 미리 생성된 HTML파일과 JS 번들을 확인할 수 있다. HTML을 열어보면 내용까지 모두 HTML 사전 렌더링이 완료되어 있는 것을 확인할 수 있다.
+- 브라우저가 만약 `/book/1` 주소로 요청을 하게 되면 Next 서버는 지체없이 1.html 파일을 보내주게 되기 때문에 굉장히 빠르게 동작한다.
+
+  > 정적 페이지로 만들어진 /book/1 ~ 3 페이지
+
+## SSG 폴백옵션 설정하기
+
+- 추가적인 옵션으로 `fallback` (대체, 대비책, 보험) 이 있다.
+- `fallback 옵션`은 존재하지 않는 URL로 접속 요청을 보내게 되었을 때 어떻게 할 것인지 대비책을 설정하는 역할
+- fallback에는 총 3가지의 대비책 옵션이 존재한다.
+- 가장 기본적인 옵션은 `fallback: false`로 설정해주면 묻지도 따지지도 않고 그냥 존재하지 않는 경로의 요청은 그냥 `404 Not Found` 페이지를 반환하는 식으로 동작한다.
+- 도서를 추가 등록하여 페이지가 새롭게 추가될 필요가 있을 떄에도 `fallback 옵션`에 따라서 앞서 설정한 URL 파라미터들 외에는 모두 Not Found 페이지를 반환하게 될 것이기 때문에 정상적으로 모든 도서의 페이지를 사용자에게 제공하기 어렵게 될 것이다.
+- 이럴 때에는 `fallback 옵션`을 다른 값으로 설정해서 조금 더 유연하게 대처하도록 만들 수 있다.
+
+> **Fallback 옵션 설정 (없는 경로로 요청시)**
+>
+> - false: 404 Not Found 반환
+> - "blocking": 즉시 생성 (Like SSR)
+> - true: 즉시 생성 + 페이지만 미리 반환
+
+> `fallback: false 옵션` 작동 방식
+
+> `fallback: "blocking" 옵션` 작동 방식
+
+> `fallback: true 옵션` 작동식방식
+
+- `blocking 옵션`은 없는 경로로 요청이 들어왔을 때 해당하는 페이지를 마치 SSR 방식처럼 Next 서버 측에서 즉시 사전 렌더링을 거쳐서 생성해서 반환해 주게 된다.
+- `blocking 옵션`을 이용하면 빌드 타입에 사전에 생성해 두지 않았었던 페이지까지 사용자에게 제공해 줄 수 있다는 장점을 갖는다.
+- 참고로 `getStaticPaths`에 등록하지 않았지만 `fallback: "blocking"`옵션으로 설정하고 프로덕션 모드로 실행한 상태에서 새롭게 SSR 방식으로 생성된 페이지는 마치 빌드 타임에 생성해둔 페이지와 비슷하게 Next 서버에 자동(`/.next/server/book`)으로 저장이 된다.
+
+  > 새롭게 생성된 뒤 Next 서버에 저장된 `/book/4` 페이지
+
+- 빌드 타임 이후에 생성된 페이지들은 처음 요청할 때에는 즉각적으로 생성 되어야 하기 때문에 SSR 방식으로 동작해서 비교적 느리게 페이지가 렌더링 될 수 있지만 한 번만 만들어 두면 자동으로 Next 서버에 저장이 되기 때문에 이후 동일 경로의 요청에는 페이지를 새롭게 생성할 필요가 없다. 그렇기 때문에 새로고침을 해도 이때에는 기존의 SSG 페이지처럼 매우 빠른 속도로 화면에 렌더링 된다.
+- 이런 방식은 마치 SSR과 SSG가 결합된 형태처럼 동작한다.
+- 동적 페이지를 구현할 때 빌드타임에 모든 도서의 아이디를 불러오기가 좀 어려운 상황이라면 그럴 때에는 `fallback: "blocking"` 옵션을 이용해서 초기 요청에는 SSR 방식으로 페이지를 새롭게 생성해서 신규 데이터를 반영하도록 하고 그 이후의 요청에 대해서는 SSG 방식으로 저장된 페이지를 매우 빠르게 반환하도록 만들 수 있다.
+- `fallback: "blocking"` 옵션에 주의해야 할 점은, 만약 백엔드 서버에게 추가적인 데이터를 요청해야 해서 사전 렌더링 시간이 길어지게 될 경우에는 이 시간 동안에는 브라우저에게 Next 서버가 아무런 응답도 할 수 없기 때문에 어쩔 수 없이 로딩이 발생하게 된다. 그래서 페이지의 크기에 따라서 꽤 오랜 시간을 기다려야 하는 경우가 생길 수도 있다.
+
+  > `fallback: "blocking"` 옵션의 주의할 점: 렌더링 지연
+
+- `fallback: "blocking"` 옵션의 렌더링 지연 문제를 해결하고 싶다면 fallback의 세 번째 옵션 true을 활용할 수 있다.
+- 해당 옵션은 브라우저로부터 존재하지 않는 페이지를 요청 받았을 때, props가 없는 버전의 페이지를 빠르게 생성해서 즉시 브라우저에게 지체 없이 반환해 주게 된다. (이때, props는 `getStaticProps` 함수가 페이지 컴포넌트에게 전달해주는 페이지에 필요한 데이터를 의미한다.)
+- (Props가 없는 페이지: `getStaticProps`로 부터 받은 데이터가 없는 페이지)
+- 그래서 데이터를 백엔드 서버로부터 불러오는 복잡하고 오래 걸리는 과정은 생략하고, 일단 컴포넌트가 렌더링하는 레이아웃 정도만 props가 없는 페이지만 사전 렌더링해서 반환한다. 그런 다음에 페이지에 필요한 데이터인 props만 따로 계산을 해서 완료되면 브라우저에게 후속으로 따로 props 데이터를 반환한다.
+
+  > `fallback: true` 옵션의 작동 방식
+
+- `fallback: true` 옵션으로 설정해 주면 빌드 타임에 생성해 놓지 않은 페이지를 앞서 살펴본 `fallback: "blocking"` 옵션처럼 사전 렌더링을 제공할 수 있으면서도 동시에 사용자에게 긴 로딩 시간 대신에 데이터가 없는 버전의 페이지라도 먼저 보여줄 수 있다는 장점이 존재한다. (이때는 로딩바를 보여주면 된다.)
+- 옵션을 변경한 후에 다시 프로덕션 모드로 실행해서 미리 `getStaticPaths` 함수에 설정하지 않은 페이지에 들어가면 `fallback 상태`에서 데이터가 없기 때문에 페이지가 없어서 문제가 발생했다는 조건문에 있는 문구를 반환한 이후에 UI를 먼저 반환하고 데이터가 채워진다.
+- `fallback: true` 옵션 또한 한번 생성한 페이지는 서버에 저장된다.
+- \* fallback 상태: 페이지 컴포넌트가 아직 서버로부터 데이터를 전달받지 못한 상태
+- 너무 빨라서 잘 안보일 때는 network 탭에서 `throttling` 이라는 도구를 이용해서 브라우저의 네트워크 요청을 강제로 느리게 만들어 볼 수 있다.
+
+  > Network 탭의 스로틀링 도구
+
+- 데이터가 `fallback 상태`에 빠졌을 때는 '로딩 중입니다'가 나오도록 하고, 데이터가 진짜 없을 때에는 '문제가 발생했습니다'를 구분 짓기 위해서는 아래와 같이 `isFallback` 이라는 프로퍼티를 이용하여 작성해볼 수 있다.
+
+```typescript
+const router = useRouter();
+
+if (router.isFallback) return '로딩 중입니다.';
+if (!book) return '문제가 발생했습니다. 다시 시도하세요.';
+```
+
+- 이제 없는 도서 id를 조회할 경우에는 fallback이 끝났는데도 book 데이터가 없으니 '문제가 발생했습니다'라는 텍스트가 렌더링이 된다.
+- 또는 아래와 같이 getStaticProps에 `notFound: true`를 반환해서 404 페이지를 렌더링해줄 수도 있다.
+
+```typescript
+export const getStaticProps = async (context: GetStaticPropsContext) => {
+  const id = context.params!.id;
+  const book = await fetchOneBook(Number(id));
+
+  if (!book) {
+    return { notFound: true };
+  }
+
+  return {
+    props: { book },
+  };
+};
+```

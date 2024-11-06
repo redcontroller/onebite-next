@@ -6,8 +6,9 @@ import { InferGetStaticPropsType } from 'next';
 import fetchBooks from '@/lib/fetch-books';
 import fetchRandomBooks from '@/lib/fetch-random-books';
 
-export const getServerSideProps = async () => {
-  // 컴포넌트보다 먼저 실행되어서, 컴포넌트에 필요한 데이터를 불러오는 함수
+// 컴포넌트보다 먼저 실행되어서, 컴포넌트에 필요한 데이터를 불러오는 함수
+export const getStaticProps = async () => {
+  console.log('인덱스 페이지');
 
   // 인수로 전달한 배열 안에 들어있는 모든 비동기 함수들을 동시에 실행을 시켜주는 함수
   const [allBooks, recoBooks] = await Promise.all([
@@ -26,7 +27,7 @@ export const getServerSideProps = async () => {
 export default function Home({
   allBooks,
   recoBooks,
-}: InferGetStaticPropsType<typeof getServerSideProps>) {
+}: InferGetStaticPropsType<typeof getStaticProps>) {
   return (
     <div className={style.container}>
       <section>
