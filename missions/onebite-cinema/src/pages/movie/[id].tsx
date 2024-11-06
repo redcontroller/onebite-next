@@ -1,11 +1,22 @@
-import { GetServerSidePropsContext, InferGetServerSidePropsType } from 'next';
+/* eslint-disable @next/next/no-img-element */
+import { GetStaticPropsContext, InferGetStaticPropsType } from 'next';
 import style from './[id].module.css';
-import fetchOneMovie from '@/lib/fetch-one-movie';
 import { useRouter } from 'next/router';
+import fetchOneMovie from '@/lib/fetch-one-movie';
+import fetchMovies from '@/lib/fetch-movies';
 
-export const getServerSideProps = async (
-  context: GetServerSidePropsContext
-) => {
+export const getStaticPaths = async () => {
+  const movies = await fetchMovies();
+  return {
+    // 모든 영화 페이지를 미리 생성하도록 설정
+    paths: movies.map(({ id }) => ({
+      params: { id: id.toString() },
+    })),
+    fallback: true, // false or "blocking"
+  };
+};
+
+export const getStaticProps = async (context: GetStaticPropsContext) => {
   const id = context.params!.id;
   const movie = await fetchOneMovie(Number(id));
 
@@ -22,7 +33,7 @@ export const getServerSideProps = async (
 
 export default function Page({
   movie,
-}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+}: InferGetStaticPropsType<typeof getStaticProps>) {
   const router = useRouter();
 
   if (router.isFallback) return '로딩 중입니다.';
@@ -44,9 +55,9 @@ export default function Page({
     <div className={style.container}>
       <div
         className={style.cover_img_container}
-        style={{ backgroundImage: `url(${posterImgUrl})` }}
+        style={{ backgroundImage: `url('${posterImgUrl}')` }}
       >
-        <img src={posterImgUrl} alt="포스터" />
+        <img src={posterImgUrl} alt="영화 포스터" />
       </div>
 
       <div className={style.info_container}>
