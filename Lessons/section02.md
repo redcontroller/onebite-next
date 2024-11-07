@@ -878,6 +878,6 @@ vercel
 vercel --prod
 ```
 
-  <img width="800px" src='https://github.com/user-attachments/assets/37cb2aca-e337-433d-bd52-e5cf8613144c' />
+  <img width="500px" src='https://github.com/user-attachments/assets/37cb2aca-e337-433d-bd52-e5cf8613144c' />
   
   > 카카오톡으로 확인해보는 배포딘 Next App 메타태그
