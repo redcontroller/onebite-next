@@ -1,5 +1,4 @@
-![2024-11-05 10 00 30](https://github.com/user-attachments/assets/4575a621-4965-43c5-9b28-7f4acec8a86a)# Page Router
-
+# Page Router
 ## Page Router 소개
 
 - 현재 많은 기업에서 사용되고 있는 안정적인 라우터
@@ -596,7 +595,7 @@ export const getStaticPaths = () => {
 - 브라우저가 만약 `/book/1` 주소로 요청을 하게 되면 Next 서버는 지체없이 1.html 파일을 보내주게 되기 때문에 굉장히 빠르게 동작한다.
 
   <img width="800px" src='https://github.com/user-attachments/assets/e0aeaf75-8b60-42b2-9723-6c47ac901eac' />
-  <img width="800px" src='https://github.com/user-attachments/assets/b79254b1-d7c7-440d-9724-14af94a41c6a' />
+  <img width="400px" src='https://github.com/user-attachments/assets/b79254b1-d7c7-440d-9724-14af94a41c6a' />
   
   > 정적 페이지로 만들어진 /book/1 ~ 3 페이지
 
@@ -627,7 +626,7 @@ export const getStaticPaths = () => {
 - `blocking 옵션`을 이용하면 빌드 타입에 사전에 생성해 두지 않았었던 페이지까지 사용자에게 제공해 줄 수 있다는 장점을 갖는다.
 - 참고로 `getStaticPaths`에 등록하지 않았지만 `fallback: "blocking"`옵션으로 설정하고 프로덕션 모드로 실행한 상태에서 새롭게 SSR 방식으로 생성된 페이지는 마치 빌드 타임에 생성해둔 페이지와 비슷하게 Next 서버에 자동(`/.next/server/book`)으로 저장이 된다.
 
-  <img width="800px" src='https://github.com/user-attachments/assets/265d2d39-4be5-4ee1-947b-1e078367f573' />
+  <img width="400px" src='https://github.com/user-attachments/assets/265d2d39-4be5-4ee1-947b-1e078367f573' />
   
   > 새롭게 생성된 뒤 Next 서버에 저장된 `/book/4` 페이지
 
