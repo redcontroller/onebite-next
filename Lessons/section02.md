@@ -796,11 +796,6 @@ export default async function handler(
         <meta property="og:image" content={coverImgUrl} />
         <meta property="og:title" content={title} />
         <meta property="og:description" content={description} />
-      </Head>      <Head>
-        <title>{title}</title>
-        <meta property="og:image" content={coverImgUrl} />
-        <meta property="og:title" content={title} />
-        <meta property="og:description" content={description} />
       </Head>
   ...
 ```
