@@ -650,3 +650,176 @@ export const getStaticProps = async (context: GetStaticPropsContext) => {
   };
 };
 ```
+
+## ISR
+
+- ISR(Incremental Static Regeneration, 증분 정적 재생성): 단순히 SSG 방식으로 생성된 페이지를 일정 시간을 주기로 다시 생성하는 기술
+- SSG는 빌드 타임에 미리 정적으로 생성한 이후에는 다시는 생성이 되지 않기 때문에 매 요청마다 똑같은 페이지만 계속 반환한다. 그래서 속도는 빠르지만 최신 데이터를 반영하기에는 많이 어렵다.
+
+  > SSG 방식에 유통기한을 포함한 개념인 ISG
+
+- SSG 방식으로 빌드 타임에 생성된 정적 페이지에 일정 시간을 주기로 페이지를 다시 생성하도록 설정할 수 있음
+- ISG 방식은 시간을 타이머로 맞춰서 칼같이 업데이트하는 것은 아니다. 60초로 시간을 설정했다면, 60초 전까지는 SSG 방식으로 생성한 페이지 v1을 반환하다가 60초 이후에 접속 요청일 발생하게 되면 v1을 일단 반환하고 서버에서 v2를 다시 생성한다. 그리고 이후 요청에 대해서 새로운 데이터가 반영된 재생성된 v2 페이지를 반환한다.
+
+> ISR 작동 방식
+
+- ISR은 굉장히 빠른 속도록 브라우저에게 정적 페이지 응답이 가능하다는 기존의 SSG 방식의 장점과 주기적으로 페이지를 업데이트 해줄 수 있기 때문에 최신 데이터를 반영할 수 있다는 SSR 방식의 장점까지 함께 가지고 있는 렌더링 전략이다.
+- Revalidate: 재검증하다, 재생성하다.
+- 아래와 같이 설정해주면 인덱스 페이지를 3초 주기로 재검증 하겠다는 의미이다.
+
+```typescript
+export const getStaticProps = async () => {
+  console.log('인덱스 페이지');
+
+  const [allBooks, recoBooks] = await Promise.all([
+    fetchBooks(),
+    fetchRandomBooks(),
+  ]);
+
+  return {
+    props: {
+      allBooks,
+      recoBooks,
+    },
+    revalidate: 3,
+  };
+};
+```
+
+> 빌드 결과 표시되는 ISR (revalidate: 3)
+
+- 빌드된 프로젝트를 프로덕션 모드로 실행해보면 3초 이내에는 같은 화면이지만 이후에는 랜던 추천 도서가 바뀐 새로운 페이지가 렌더링 된다.
+- (강사) Next.js 프로젝트를 할 때에도 되도록이면 ISR 기법을 이용해서 페이지를 구성하는 것을 가장 추천한다.
+
+## ISR 주문형 재 검증(On-Demand-ISR)
+
+- 앞서 추천한 시간 기반의 ISR 방식을 적용하기 어려운 경우의 페이지가 존재한다.
+- 해당 페이지는 시간과는 관계없이 사용자의 행동을 기반으로 데이터가 업데이트 되는 페이지이다.
+- 예를들면 커뮤니티 사이트의 게시글 페이지가 그러한데, 게시글 수정이나 삭제는 페이지 데이터를 업데이트 또는 제거한 뒤 새로운 페이지를 렌더링 해줘야 한다.
+- 즉, ISR의 단점은 설정한 시간 전에는 최신 데이터를 즉각적으로 반영하기 어렵다는 점이다.
+- 또한 사용자의 행동(게시글 수정)이 24시간 이후에 발생한다면 그 이전에 설정한 시간마다 불필요한 페이지의 재생성이 발생한다.
+
+  > Q. 그냥 SSR로 처리하면 안되나? <br>
+  > SSR의 경우에는 이전에 살펴봤었던 것처럼 브라우저가 요청할 때마다 매번 새롭게 페이지를 사전 렌더링 하기 때문에 응답 시간도 많이 느려지게 되고 동시에 접속자들이 굉장히 많이 모릴게 될 때에는 서버의 부하까지 커지게 된다. 그렇기 때문에 되도록이면 정적인 페이지로써 처리해주는 것이 좋다.
+
+- Next.js는 시간을 기반으로 페이지를 업데이트 하는 기존의 ISR 방식이 아닌 요청을 기반으로도 페이지를 업데이트 할 수 있는 새로운 방식의 ISR도 제공한다.
+- 이런 방식의 ISR을 **요청을 받을 때 마다 페이지를 다시 생성하는 ISR 방식**이라고 해서 `On-Demand ISR`이라고 부른다.
+- `On-Demand`의 뜻은 요청을 받을 때마다 주문이 들어올 때마다라는 의미를 가진다.
+- 쉽게 말하면 이 On-Demand ISR 방식은 페이지의 업데이트를 우리가 직접 트리거링 할 수 있다는 것이다.
+
+> On-Demand ISR의 작동 방식
+
+- `On-Demand ISR 방식`을 이용하면 페이지를 최신 데이터를 반영하면서도 정적 페이지로써 처리해 줄 수 있다.
+- `On-Demand ISR` 사전 렌더링 방식은 아래와 같이 생성한 API Routes를 통해서 요청을 받았을 때 특정 페이지를 다시 생성하도록 만들 수 있다. 이로서 사용자의 행동에 따라 데이터가 업데이트 된다거나 특정 조건에 따라서 데이터가 업데이트 되어야 하는 페이지를 정적 페이지로 유지할 수 있다.
+- 이런 ISR 방식은 대부분의 케이스를 커버할 수 있는 굉장히 강력한 사전 렌더링 방식이기 때문에 오늘날 거의 대부분의 Next.js로 구축된 웹서비스들에서는 활발하게 사용이 되고 있다.
+
+```typescript
+import { NextApiRequest, NextApiResponse } from 'next';
+
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  try {
+    await res.revalidate('/');
+    return res.json({ revalidate: true });
+  } catch (err) {
+    res.status(500).send('Revalidation Failed');
+  }
+}
+```
+
+> Revalidate API 주소로 접속
+
+## SEO 설정하기
+
+- Next App에서는 리액트 앱과는 달리 각 페이지별로 메타 태그를 별도로 설정해 줄 수 있다.
+- Next App에서는 \<Head\>라는 추가적인 컴포넌트를 이용해서 페이지별로 메타 태그를 설정해줄 수 있다.
+
+```tsx
+  return (
+    <>
+      <Head>
+        <title>{title}</title>
+        <meta property="og:image" content={coverImgUrl} />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+      </Head>      <Head>
+        <title>{title}</title>
+        <meta property="og:image" content={coverImgUrl} />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+      </Head>
+  ...
+```
+
+- 특정 도서의 상세 페이지인 /book 페이지의 경우에는 백엔드 서버에서 불러온 데이터로 메타 태그의 값을 설정해줄 수도 있다.
+- **다이나믹한 (동적 경로를 갖는) SSG 페이지에서는 꼭 주의**해야 할 점이 있다.
+- `getStaticPaths` 함수에 `fallback: true`로 설정된 상태에서 빌드 타임에 생성되지 않은 경로로 접속 요청을 받았을 때, 네트워크 탭으로 서버로부터 반환되는 HTML 응답을 보면 우리가 설정한 메타 태그는 전부 빠져 있는 것을 볼 수 있다.
+- 왜냐하면 코드에서 조건문을 통해서 만약 현재 props의 데이터가 로딩 중이(fallback 상태)라면 일단 '로딩 중입니다'를 페이지 컴포너트에서 반환하다도록 되어 있다. 결국 fallback 상태가 아닐 때 반환될 메타 태그 설정은 적용이 안되는 것이다.
+- 메타 태그가 설정되려면 fallback 상태가 끝나고 데이터가 다 들어오고 나서야 페이지에 추가 반영된다.
+- 그래서 발생하는 문제는 페이지를 처음 요청했을 때는 메타 태그가 적용되지 않기 때문에 SEO 설정이 안되어 버린다.
+- 이럴 때는, 페이지가 `fallback 상태`일 때에도 아주 기본적인 메타태그 설정을 해둘 필요가 있다.
+- `/book` 페이지처럼 `fallback 상태`를 사용하는 이런 페이지들에서는 현재 페이지가 fallback 상태에 있을 때에도 기본적인 메타 태그는 리턴해 줄 수 있도록 설정해 두는 것이 좋다.
+
+```tsx
+  ...
+  if (router.isFallback)
+    return (
+      <>
+        <Head>
+          <title>한입북스</title>
+          <meta property="og:image" content="/thumbnail.png" />
+          <meta property="og:title" content="한입북스" />
+          <meta
+            property="og:description"
+            content="한입 북스에 등록된 도서들을 만나보세요"
+          />
+        </Head>
+        <div>로딩 중입니다.</div>
+      </>
+    );
+  if (!book) return '문제가 발생했습니다. 다시 시도하세요.';
+
+  const { id, title, subTitle, description, author, publisher, coverImgUrl } =
+    book;
+  return (
+    <>
+      <Head>
+        <title>{title}</title>
+        <meta property="og:image" content={coverImgUrl} />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+      </Head>
+      <div className={style.container}>
+  ...
+```
+
+## 배포하기
+
+- 보통 프론트엔드 애플리케이션을 배포할때는 클라우드 서비스(firebase, Netlify)를 통해서 배포하게 된다.
+- Next.js는 보통 Vercel을 통해서 배포가 이루어진다. Next.js를 만들고 있는 회사가 바로 Vercel 이기 때문에 Vercel 서비스에 배포했을 가장 쉽고 또 빠르게 배포할 수 있다.
+- vercel 패키지를 글로벌로 설치하기
+
+```bash
+npm install -g vercel
+vercel login
+vercel
+```
+
+> vercel 배포 옵션
+
+- 우리가 배포해 놓은 Next App에서는 로컬 PC에서 실행하고 있는 백엔드 서버로부터 데이터를 불러올 수가 없다.
+- 백엔드 서버도 배포해준 다음에 배포된 백엔드 서버로부터 데이터를 불러오도록 설정를 해주면 된다.
+- 배포한 onebite-books-server 주소를 복사해서 Next.js App에서 이 주소로부터 데이터를 불러오도록 설정을 해준다.
+- 변경해줄 파일은 /lib/fetch-\* 파일들의 url을 주소이다.
+
+  > 배포한 onebite-books-server
+
+- 이제 수정한 코드를 프로덕션 모드로 배포해 본다.
+
+```bash
+vercel --prod
+```
+
+> 카카오톡으로 확인해보는 배포딘 Next App 메타태그
