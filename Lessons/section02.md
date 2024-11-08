@@ -898,17 +898,24 @@ vercel --prod
    - 페이지별 레이아웃의 설정이 많아지게 된다면 코드의 중복도 발생하고, 불필요하게 복잡하고 어려운 느낌이 있다.
 2. **데이터 페칭이 페이지 컴포넌트에 집중된다.**
    - 사전 렌더링 과정에서 불러온 데이터가 페이지 컴포넌트에만 전달이 되기 떄문에 해당 페이지 안에 복잡하게 여러 개의 컴포넌트들이 존재해야 된다면 데이터를 전달하는 과정이 생각보다 꽤나 번거로워질 수 있다. (외부 라이브러리 필요)
+
+      <img width="800px" src='https://github.com/user-attachments/assets/07475b5c-1488-44ba-b344-04272dd8fdf0' />
      > 복잡한 컴포넌트들이 존재할 경우
 3. **불필요한 컴포넌트들도 JS Bundle에 포함된다.**
 
    - 서버측에서 JS 실행으로 1번, 하드레이션을 하면서 클라이언트 측에서 1번 실행된다.
 
+     <img width="800px" src='https://github.com/user-attachments/assets/c19a3915-1ef4-490f-b8e6-18ee23ae6fb0' />
+     
      > 총 두번 실행되는 페이지 컴포넌트
 
    - Next App에서는 상호작용이 있는 컴포넌트와 단순히 UI만 렌더링하면 되는 상호작용이 없는 컴포넌트로 나뉠 수 있다.
    - 상호작용이 필요하지 않은 컴포넌트들은 브라우저에서 하이드레이션이 진행될 필요가 없이 서버에서 컴포넌트가 실행될 때 한번만으로 충분하다.
    - 하지만 상호작용이 필요없는 컴포넌트까지 JS Bundle에 포함되면서 불필요하게 용량이 커지고, 이와 비례해서 하이드레이션이 완료되는 데까지 걸리는 시간도 오래 걸리게 되어 최종적을 TTI에 걸리는 시간까지 늦어지게 되는 문제를 초래한다.
 
+     <img width="800px" src='https://github.com/user-attachments/assets/5a7a1417-52b8-4246-9392-d054e943c72a' />
+     <img width="800px" src='https://github.com/user-attachments/assets/c48864d2-877d-4af6-8bf5-befad4306814' />
+    
      > 상호작용이 없는 컴포넌트가 JS Bundle에 포함되면 생기는 문제
 
    - 추후 배울 App Router에서는 상호작용이 없는 컴포넌트를 `React Server Components`로 분류하고 개발을 진행하며, JS Bundle에 포함되지 않도록 설정해줄 수 있다. <br> \* FCP (First Contentful Paint) <br> \* TTI (Time To Interaction) <br>
