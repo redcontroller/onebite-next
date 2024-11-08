@@ -1,4 +1,5 @@
 # Page Router
+
 ## Page Router 소개
 
 - 현재 많은 기업에서 사용되고 있는 안정적인 라우터
@@ -438,7 +439,7 @@ export default function Home(
 
   <img width="800px" src='https://github.com/user-attachments/assets/c687c6c1-bae9-41f9-8df7-f2287411206d' />
   <img width="800px" src='https://github.com/user-attachments/assets/f83d6eb4-b0a0-45d2-adda-c2c9c5028e3e' />
-  
+
   > SSR 방식의 장단점
 
 - SSG(Static Site Generation, 정적 사이트 생성)는 SSR의 치명적인 단점을 해결하는 새로운 사전 렌더링 방식
@@ -447,7 +448,7 @@ export default function Home(
 
   <img width="800px" src='https://github.com/user-attachments/assets/3811ad30-3e95-4f98-9db4-9f507972c370' />
   <img width="800px" src='https://github.com/user-attachments/assets/24e6cffb-2253-410f-9e6f-3e01b7716b9a' />
-  
+
   > SSG 동작 방식
 
 - SSG는 이런 방식으로 동작하기 때문에 빌드 타입에 일어나는 사전 렌더링 과정에서 백엔드 서버에게 데이터를 불러와야 하는 과정이 추가로 필요하다고 하더라도, 또 그 과정이 특정 상황으로 인해서 또 매우 오래 걸리게 된다고 하더라도 사용자의 경험에는 아무런 영향을 미치지 않는다.
@@ -457,7 +458,7 @@ export default function Home(
 
   <img width="800px" src='https://github.com/user-attachments/assets/306aa901-f20b-4479-a74d-2e621f9fc988' />
   <img width="800px" src='https://github.com/user-attachments/assets/0352fa0a-0dc2-4141-a453-7560398dbcf5' />
-  
+
   > SSG의 장단점
 
 ## SSG 정적 경로에 적용하기
@@ -499,7 +500,7 @@ export default function Home({
   - 빈 동그라미: 흰색 동그라미와 같이 정적 페이지인데, 해당 페이지에는 `getStaticProps`를 설정해 두지 않았기 때문에 기본 값으로서 설정이 된 정적 페이지(SSG)라는 것.
 
   <img width="800px" src='https://github.com/user-attachments/assets/7d2d2afd-441e-4fd0-b6e4-dd7a78949f0e' />
-  
+
   > 빌드 결과
 
 - `getStaticProps` 함수를 사용한 인덱스 페이지에만 흰색 동그라미 기호(SSG)가 붙어 있음을 확인할 수 있다.
@@ -526,13 +527,13 @@ export default function Home({
 - `npm run build`를 해보면 이제 동그라미로 설정이 되면서 SSG 방식으로 동작하도록 설정이 된 것을 볼 수 있다.
 
   <img width="800px" src='https://github.com/user-attachments/assets/deb78eb5-20e8-4690-b28e-e8ed7aa2160f' />
-  
+
   > SSG로 바뀐 Search 페이지
 
 - 프로덕션 모드로 실행하고 난 뒤 브라우저 검색 페이지의 네트워크 탭에서 새로고침을 한번 해주면 넥스트 서버 측에서 보내주는 파일을 확인할 수 있는데, 그 중에 가장 처음으로 보내주게 되는 사전 렌더링 결과인 HTML 파일을 클릭해서 열어보면 검색 결과 데이터는 제외하고 나머지 부분만 렌더링해서 브라우저에게 보내주는 걸 볼 수 있다.
 
   <img width="800px" src='https://github.com/user-attachments/assets/448a9527-658f-4249-972f-65238ac1f7de' />
-  
+
   > 사전 렌더링된 빈 HTML 파일
 
 - 정리하면, 인덱스 페이지처럼 사전 렌더링을 할 때 빌드 타임에 데이터를 불러오게 하고면싶다면 `getStaticProps` 함수를 사욯하면 된다. 만약에 서치 페이지처럼 쿼리스트리링을 사용하기 때문에 빌드 타임에는 데이터를 미리 불러올 수 없는 페이지라면 해당 데이터를 리액트 앱에서 (클라이언트 사이드 측에서) 직접 패칭해서 불러오도록 설정하는 것도 가능하다.
@@ -562,7 +563,7 @@ export default function Page({
 - 동적인 페이지에서는 getStaticPaths가 필요하다.
 
   <img width="800px" src='https://github.com/user-attachments/assets/6d751b1f-556d-46ec-aa92-a85ca134750b' />
-  
+
   > Server Error 메시지
 
 - Next 앱의 북페이지처럼 동적 경로를 갖도록 설정된 페이지에 SSG를 적용하기 위해서는 사전 렌더링 이전에 해당 페이지에 있는 모든 경로들을 직접 설정하는 작업을 선수로 진행 해주어야 한다. 빌드타임에 어떤 경로들이 존재할 수 있는지 설정하는 작업이 꼭 필요하기 때문이다.
@@ -572,7 +573,7 @@ export default function Page({
 
   <img width="800px" src='https://github.com/user-attachments/assets/a1909895-4ea5-408b-b461-3d3a1c80a08b' />
   <img width="800px" src='https://github.com/user-attachments/assets/1271ce39-8df3-496c-aab0-e6441098930a' />
-  
+
   > 동적 경로의 SSG 작동 방식
 
 - 정리하면, `getStaticPaths`라는 함수를 호출해서 연재 이 페이지에 존재할 수 있는 경로들을 먼저 설정한 다음에 해당 페이지들을 `getStaticProps` 함수를 일일이 한 번씩 다 호출해서 사전에 여러 개의 페이지를 렌더링하는 방식으로 동작시켜야 된다.
@@ -596,7 +597,7 @@ export const getStaticPaths = () => {
 
   <img width="800px" src='https://github.com/user-attachments/assets/e0aeaf75-8b60-42b2-9723-6c47ac901eac' />
   <img width="400px" src='https://github.com/user-attachments/assets/b79254b1-d7c7-440d-9724-14af94a41c6a' />
-  
+
   > 정적 페이지로 만들어진 /book/1 ~ 3 페이지
 
 ## SSG 폴백옵션 설정하기
@@ -627,7 +628,7 @@ export const getStaticPaths = () => {
 - 참고로 `getStaticPaths`에 등록하지 않았지만 `fallback: "blocking"`옵션으로 설정하고 프로덕션 모드로 실행한 상태에서 새롭게 SSR 방식으로 생성된 페이지는 마치 빌드 타임에 생성해둔 페이지와 비슷하게 Next 서버에 자동(`/.next/server/book`)으로 저장이 된다.
 
   <img width="400px" src='https://github.com/user-attachments/assets/265d2d39-4be5-4ee1-947b-1e078367f573' />
-  
+
   > 새롭게 생성된 뒤 Next 서버에 저장된 `/book/4` 페이지
 
 - 빌드 타임 이후에 생성된 페이지들은 처음 요청할 때에는 즉각적으로 생성 되어야 하기 때문에 SSR 방식으로 동작해서 비교적 느리게 페이지가 렌더링 될 수 있지만 한 번만 만들어 두면 자동으로 Next 서버에 저장이 되기 때문에 이후 동일 경로의 요청에는 페이지를 새롭게 생성할 필요가 없다. 그렇기 때문에 새로고침을 해도 이때에는 기존의 SSG 페이지처럼 매우 빠른 속도로 화면에 렌더링 된다.
@@ -636,7 +637,7 @@ export const getStaticPaths = () => {
 - `fallback: "blocking"` 옵션에 주의해야 할 점은, 만약 백엔드 서버에게 추가적인 데이터를 요청해야 해서 사전 렌더링 시간이 길어지게 될 경우에는 이 시간 동안에는 브라우저에게 Next 서버가 아무런 응답도 할 수 없기 때문에 어쩔 수 없이 로딩이 발생하게 된다. 그래서 페이지의 크기에 따라서 꽤 오랜 시간을 기다려야 하는 경우가 생길 수도 있다.
 
   <img width="800px" src='https://github.com/user-attachments/assets/4cf6f89e-2a38-4fe2-a1fc-fee9ed7baa1c' />
-  
+
   > `fallback: "blocking"` 옵션의 주의할 점: 렌더링 지연
 
 - `fallback: "blocking"` 옵션의 렌더링 지연 문제를 해결하고 싶다면 fallback의 세 번째 옵션 true을 활용할 수 있다.
@@ -645,7 +646,7 @@ export const getStaticPaths = () => {
 - 그래서 데이터를 백엔드 서버로부터 불러오는 복잡하고 오래 걸리는 과정은 생략하고, 일단 컴포넌트가 렌더링하는 레이아웃 정도만 props가 없는 페이지만 사전 렌더링해서 반환한다. 그런 다음에 페이지에 필요한 데이터인 props만 따로 계산을 해서 완료되면 브라우저에게 후속으로 따로 props 데이터를 반환한다.
 
   <img width="800px" src='https://github.com/user-attachments/assets/30d3bd86-3388-4474-a18c-eea4c71a5c69' />
-  
+
   > `fallback: true` 옵션의 작동 방식
 
 - `fallback: true` 옵션으로 설정해 주면 빌드 타임에 생성해 놓지 않은 페이지를 앞서 살펴본 `fallback: "blocking"` 옵션처럼 사전 렌더링을 제공할 수 있으면서도 동시에 사용자에게 긴 로딩 시간 대신에 데이터가 없는 버전의 페이지라도 먼저 보여줄 수 있다는 장점이 존재한다. (이때는 로딩바를 보여주면 된다.)
@@ -655,7 +656,7 @@ export const getStaticPaths = () => {
 - 너무 빨라서 잘 안보일 때는 network 탭에서 `throttling` 이라는 도구를 이용해서 브라우저의 네트워크 요청을 강제로 느리게 만들어 볼 수 있다.
 
   <img width="800px" src='https://github.com/user-attachments/assets/81a9845a-048e-480d-a373-d398ce6569f2' />
-  
+
   > Network 탭의 스로틀링 도구
 
 - 데이터가 `fallback 상태`에 빠졌을 때는 '로딩 중입니다'가 나오도록 하고, 데이터가 진짜 없을 때에는 '문제가 발생했습니다'를 구분 짓기 위해서는 아래와 같이 `isFallback` 이라는 프로퍼티를 이용하여 작성해볼 수 있다.
@@ -692,7 +693,7 @@ export const getStaticProps = async (context: GetStaticPropsContext) => {
 
   <img width="800px" src='https://github.com/user-attachments/assets/fd33d6d6-1fa9-466d-8e43-d0593d0dee6e' />
   <img width="800px" src='https://github.com/user-attachments/assets/825fb905-4922-494f-9644-d649111665dc' />
-  
+
   > SSG 방식에 유통기한을 포함한 개념인 ISR
 
 - SSG 방식으로 빌드 타임에 생성된 정적 페이지에 일정 시간을 주기로 페이지를 다시 생성하도록 설정할 수 있음
@@ -700,7 +701,7 @@ export const getStaticProps = async (context: GetStaticPropsContext) => {
 
   <img width="800px" src='https://github.com/user-attachments/assets/4e3557ac-4869-44a2-9a75-5a8eaed8a477' />
   <img width="800px" src='https://github.com/user-attachments/assets/8d38125a-c5c6-4ab0-a65f-67ba2eda5541' />
-  
+
   > ISR 작동 방식
 
 - ISR은 굉장히 빠른 속도록 브라우저에게 정적 페이지 응답이 가능하다는 기존의 SSG 방식의 장점과 주기적으로 페이지를 업데이트 해줄 수 있기 때문에 최신 데이터를 반영할 수 있다는 SSR 방식의 장점까지 함께 가지고 있는 렌더링 전략이다.
@@ -743,7 +744,7 @@ export const getStaticProps = async () => {
 
   <img width="800px" src='https://github.com/user-attachments/assets/8c2b5e5e-23be-4cfb-9315-db8941e62aa8' />
   <img width="800px" src='https://github.com/user-attachments/assets/8692153b-8406-4ed7-a1e6-8bf52a217a11' />
-  
+
   > 시간 기반의 ISR의 맹점
 
   > Q. 그냥 SSR로 처리하면 안되나? <br>
@@ -755,7 +756,7 @@ export const getStaticProps = async () => {
 - 쉽게 말하면 이 On-Demand ISR 방식은 페이지의 업데이트를 우리가 직접 트리거링 할 수 있다는 것이다.
 
   <img width="800px" src='https://github.com/user-attachments/assets/7f8fc755-0e3f-4783-9377-83df17656f71' />
-  
+
   > On-Demand ISR의 작동 방식
 
 - `On-Demand ISR 방식`을 이용하면 페이지를 최신 데이터를 반영하면서도 정적 페이지로써 처리해 줄 수 있다.
@@ -863,7 +864,7 @@ vercel
 - 변경해줄 파일은 /lib/fetch-\* 파일들의 url을 주소이다.
 
   <img width="800px" src='https://github.com/user-attachments/assets/fc5cf4b9-f0ae-451d-a728-b3b59abeecac' />
-  
+
   > 배포한 onebite-books-server
 
 - 이제 수정한 코드를 프로덕션 모드로 배포해 본다.
@@ -875,3 +876,39 @@ vercel --prod
   <img width="500px" src='https://github.com/user-attachments/assets/37cb2aca-e337-433d-bd52-e5cf8613144c' />
   
   > 카카오톡으로 확인해보는 배포딘 Next App 메타태그
+
+# 페이지 라우터 정리
+
+## Page Router의 장점
+
+1. **파일 시스템 기반의 간편한 페이지 라우팅 제공**
+
+   - 폴더 구조만으로도 원하는 대로 자유롭게 페이지의 라우터을 설정할 수 있다.
+
+2. **다양한 방식의 사전 렌더링 제공**
+   (1) 서버사이드 렌더링 (SSR): 요청이 들어올 때마다 사전 렌더링을 진행 함
+   (2) 정적 사이트 생성 (SSG): 빌드 타임에 미리 페이지를 사전 렌더링 해 둠
+   (3) 증분 정적 재생성 (ISR): SSG 페이지 일정 시간마다 재새성
+   - 다양한 사전 렌더링 전략들이 각각 확실한 특징들을 갖고 서로의 단점들을 상호 보완하고 있음
+   - 페이지별로 다르게 설정할 수도 있기 때문에 거의 모든 케이스에 쉽게 대응할 수 있다는 장점이 있음
+
+## Page Router의 단점
+
+1. **페이지별 레이아웃 설정이 번거롭다.**
+   - 페이지별 레이아웃의 설정이 많아지게 된다면 코드의 중복도 발생하고, 불필요하게 복잡하고 어려운 느낌이 있다.
+2. **데이터 페칭이 페이지 컴포넌트에 집중된다.**
+   - 사전 렌더링 과정에서 불러온 데이터가 페이지 컴포넌트에만 전달이 되기 떄문에 해당 페이지 안에 복잡하게 여러 개의 컴포넌트들이 존재해야 된다면 데이터를 전달하는 과정이 생각보다 꽤나 번거로워질 수 있다. (외부 라이브러리 필요)
+     > 복잡한 컴포넌트들이 존재할 경우
+3. **불필요한 컴포넌트들도 JS Bundle에 포함된다.**
+
+   - 서버측에서 JS 실행으로 1번, 하드레이션을 하면서 클라이언트 측에서 1번 실행된다.
+
+     > 총 두번 실행되는 페이지 컴포넌트
+
+   - Next App에서는 상호작용이 있는 컴포넌트와 단순히 UI만 렌더링하면 되는 상호작용이 없는 컴포넌트로 나뉠 수 있다.
+   - 상호작용이 필요하지 않은 컴포넌트들은 브라우저에서 하이드레이션이 진행될 필요가 없이 서버에서 컴포넌트가 실행될 때 한번만으로 충분하다.
+   - 하지만 상호작용이 필요없는 컴포넌트까지 JS Bundle에 포함되면서 불필요하게 용량이 커지고, 이와 비례해서 하이드레이션이 완료되는 데까지 걸리는 시간도 오래 걸리게 되어 최종적을 TTI에 걸리는 시간까지 늦어지게 되는 문제를 초래한다.
+
+     > 상호작용이 없는 컴포넌트가 JS Bundle에 포함되면 생기는 문제
+
+   - 추후 배울 App Router에서는 상호작용이 없는 컴포넌트를 `React Server Components`로 분류하고 개발을 진행하며, JS Bundle에 포함되지 않도록 설정해줄 수 있다. <br> \* FCP (First Contentful Paint) <br> \* TTI (Time To Interaction) <br>
