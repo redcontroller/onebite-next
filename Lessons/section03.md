@@ -16,6 +16,8 @@
 
   - TurboPack은 24.10.25일 기준으로 아직은 조금 실험적인 단계에 있으므로 No
 
+    <img width='800px' src='https://github.com/user-attachments/assets/adaa9eda-4ee7-4212-b939-95157d11c03c' />
+
     > Next App 최신버전 설치 옵션
 
 ```bash
@@ -26,15 +28,23 @@ npx create-next-app@latest section03
 
 - Page Router 버전의 페이지 라우팅은 pages 폴더 하위에 생성해둔 파일의 이름이 곧 경로가 되었다.
 
+  <img width='800px' src='https://github.com/user-attachments/assets/d3461cb6-84fe-4504-a267-1e99bdee433c' />
+
   > Page Router 버전의 페이지 라우팅 설정
 
 - App Router 버전의 페이지 라우팅은 app 폴더 하위에 `page.tsx`라는 이름을 갖는 파일만 페이지 컴포넌트 파일로 취급된다.
 
+  <img width='800px' src='https://github.com/user-attachments/assets/7dce03e1-91d5-4915-871e-f4453d87190b' />
+  <img width='800px' src='https://github.com/user-attachments/assets/b519c731-c3ef-4245-8769-efb3b17ff5ec' />
+  
   > App Router 버전의 페이지 라우팅 설정
 
 - App Router 버전의 Next App에서도 앱 폴더 밑에 구조를 기반으로 페이지 라우팅이 자동 설정된다는 점은 Page Router 버전과 동일하지만 대신에 App Router에서는 `page.tsx`라는 이름을 갖는 파일만 페이지 파일로써 설정된다.
 - Next App에서는 쿼리스트링이나 URL 파라미터와 같은 경로상에 포함되는 값들은 페이지 컴포넌트에게 모두 props로써 전달된다.
 - 브라우저에서 URI를 `localhost:3000/search?q=파묘`를 사용해서 접근하고, 컴포넌트에 전달된 props를 출력해보면 아래와 같이 쿼리스트링과 URL 파라미터를 포함하는 `searchParams`와 `params` Promise 객체를 확인할 수 있다.
+
+  <img width='400px' src='https://github.com/user-attachments/assets/028b17a7-6489-4f21-9c65-04f392d71b87' />
+  <img width='400px' src='https://github.com/user-attachments/assets/a3d89ff8-be3d-42c7-8827-7d0cb3778d0c' />
 
   > props에 포함된 params, searchParams 객체
 
@@ -77,11 +87,15 @@ export default async function Page({
 
 - 레이아웃 파일은 폴더 안에 있는 모든 페이지 컴포넌트에 다 똑같이 적용이 되는 레이아웃을 정의하게 된다.
 
+  <img width='800px' src='https://github.com/user-attachments/assets/ff2630d8-33fc-4e11-ad14-3363d09008ea' />
+
   > 레이아웃 설정
 
 - `layout.tsx` 파일 위로 경로에 새로운 `layout.tsx` 파일이 하나 추가되면, 레이아웃이 자동으로 중첩되어 적용된다.
 - App Router 에서는 레이아웃 파일을 적절한 위치에 배치시켜주는 것만으로도 쉽게 중첩된 레이아웃을 구현할 수 있다.
 
+  <img width='800px' src='https://github.com/user-attachments/assets/7b5d8759-66bf-4547-b4f7-b37d29f94351' />
+  
   > 충접되어 적용되는 layout 컴포넌트
 
 - Root 레이아웃 컴포넌트의 역할은 모든 페이지에 동일하게 적용되는 가장 기본적인 레이아웃으로써 HTML 페이지의 기초 틀을 잡아주는 필수적으로 Next.js App에 존재해야 한다.
