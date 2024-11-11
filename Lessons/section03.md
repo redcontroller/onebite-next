@@ -120,22 +120,31 @@ export default async function Page({
 - 하이드레이션을 꼭 해야만 하는 상호작용이 필요한 초록색으로 표시해둔 컴폰너트들도 있지만, React Hooks나 이벤트 핸들러가 없어서 상호작용 기능이 없기 때문에 하이드레이션이 필요하지 않는 빨간색으로 표시해둔 정적인 컴포넌트들도 같이 존재한다.
 - 그렇기 때문에 브라우저에 전송되는 JS Bundle에 포함되어야 하는 컴포넌트들은 초록색으로 표시해둔 상호작용이 필요한 컴포넌트 뿐이다.
 
+  <img width='800px' src='https://github.com/user-attachments/assets/6c442022-10b4-4446-9f64-47ad53b41490' />
+  
   > 상호작용이 있거나 컴포넌트와 없는 컴포넌트
 
 - 상호작용이 없는 컴포넌트는 굳이 브라우저 측에서 한 번 더 실행(하이드레이션)될 이유가 없다.
 - 페이지 라우터는 이런 부분을 신경 쓰지 않기 때문에 어떠한 컴포넌트든 페이지에 포함되어 있기만 하면 JS Bundle로 한꺼번에 다 묶은 다음에 그대로 브라우저에게 전달해 버린다. 어쩔 수 없이 불필요하게 많은 컴포넌트들이 JS Bundle에 포함이 될 수 밖에 없으며, 결국 JS Bundle 용량이 너무 쓸데없이 커지게 되어 버렸다. 그로인해 bundle을 불러오는 데 걸리는 시간도 오래 걸리며, 하이드레이션을 진행하는 시간도 늘어나버리기 때문에 결국 TTI(Time to Interaction)까지 늦어져 버리게 된다는 문제점이 있었다.
 
+  <img width='800px' src='https://github.com/user-attachments/assets/09501078-6111-46a0-847a-9f2dc7a34d6d' />
+  
   > Page Router의 문제점
 
 - 이런 Page Router의 문제점을 해결하는 방법은 JS Bundle에 포함될 필요가 없었던 빨간색 컴포넌트들이 번들에 포함되지 않으면 된다.
 - 그렇게 되면 JS bundle의 용량이 크게 줄어들기 때문에 하이드레이션에 걸리는 시간도 줄어들게 되고 TTI까지 걸리는 시간도 줄어든다.
 
+  <img width='800px' src='https://github.com/user-attachments/assets/14dac69e-e418-4bae-b1b4-e645435e0c40' />
+  
   > JS Bundle을 최소화하여 Page Router의 문제점을 해결
 
 - 상호작용이 없는 빨간색 컴포넌트들을 클라이언트 측에 전달되지 않도록 다른 유형으로 분류할 필요가 있다. 그리고 분류된 컴포넌트들은 Next 서버 측에서 사전 렌더링을 진행할 때 UI를 렌더링하기 위해서 딱 한번만 실행되어야 한다.
 - 이렇게 Next 서버측에서 사전 렌더링을 진행할 때만 동작하도만 설계된 컴포넌트가 `React Server Component`이다.
 - 정리하면 일반적인 컴포넌트들과 달리 상호작용이 없어서 서버 측에서 딱 한번만 실행되는 컴포넌트들은 `React Server Component`로 분류하고, 반대로 상호작용이 있어서 하이드레이션이 필요하기 떄문에 서버와 브라우저에서 모두 다 한번씩 똑같이 실행이 되는 기존에 우리가 써오고 있던 클래식한 컴포넌트는 서버의 반대말 격인 `React Client Component`라고 분류한다.
 
+  <img width='800px' src='https://github.com/user-attachments/assets/8426a491-213a-4c93-9e89-5018b0b52c3e' />
+  <img width='800px' src='https://github.com/user-attachments/assets/87bbe673-9d83-4ddc-a23b-05ee89fb761d' />
+  
   > Page Router의 문제점으로 작용하는 TTI 시간 단축을 위한 컴포넌트의 분류
 
 - 이제 Next 서버가 브라우저로부터 접속 요청을 받아서 사전 렌더링을 진행하는 과정에서는 HTML 페이지를 한번 생성해야 되기 때문에 서버 컴포넌트이건 클라이언트 컴포넌트이건 모두 동일하게 한번은 실행이 되겠지만 그 이후에 `Hydration`을 위해서 컴포넌트들을 모아 JS bundle로 전달하는 과정에서 `Server Component`들은 제외되게 된다. 그래서 `Client Component`들만 JS bundle에 포함되어서 브라우저에 전달이 되기 때문에 초록색인 `Client Component`들만 브라우저, 즉 클라이언트 측에서 한 번 더 따로 실행되게 된다.
@@ -149,6 +158,8 @@ export default async function Page({
 - 서버 컴포넌트에서는 원래 서버에서 할 수 있었던 보안에 민감한 작업이나, 데이터를 패칭해오는 그런 기능 등의 다양한 작업들을 진행할 수 있게 된다. 그것과는 반대로 브라우저에서만 할 수 있는 일들은 서버 컴포넌트 내부에서는 수행할 수 없다.
 - 예를들면 `useEffect` 같은 브라우저 측에서만 실행이 가능한 React Hooks를 호출할 수 없다. (호출하면 오류가 발생함)
 
+  <img width='800px' src='https://github.com/user-attachments/assets/596fcf36-88b8-4e37-a577-8f644c3ef5e5' />
+  
   > 사전 렌더링 과정에서 서버 측과 하이드레이션 과정에서 브라우저 측에서 총 2번 실행되는 클라이언트 컴포넌트
 
 - `useEffect`처럼 브라우저에서만 사용할 수 있는 React Hooks를 사용하려면 `use client`라는 디렉티브(지시자)를 파일 안에 명시해서 파일 안에 있는 모든 컴포넌트들을 다 클라이언트 컴포넌트로서 직접 설정해주어야 한다.
@@ -173,6 +184,8 @@ export default async function Page({
 - 이유는 클라이언트 컴포넌트는 서버와 브라우저에서 모두 다 한번씩 실행이 되지만,import되는 서버 컴포넌트는 서버 측에서만 실행이 된다. 그렇기 때문에 서버 측에서 실행될 때에는 두 컴포넌트의 코드가 다 존재하지만, 반대로 하이드레이션을 위해서 한 번 더 실행이 될 때에는 클라이언트 컴포넌트만 존재하게 된다. 결국 하이드레이션 중에 존재 하지 않는 코드(클라이언트 측에서 실행하지 않는 서버 컴포넌트 코드)를 import 하려고 하니 오류가 발생하는 것이다.
 - 하이드레이션 중에 서브 컴포넌트가 존재하지 않는 이유는 JS bundle 용량을 줄이기 위해 JS bundle로부터 제외되기 떄문이다. 그래서 서버 컴포넌트의 코드들은 브라우저에게 전달조차 되지 않는다.
 
+  <img width='800px' src='https://github.com/user-attachments/assets/1df127dc-6b59-4c8f-8146-5c31d249233c' />
+  
   > 클라이언트 컴포넌트에서 서버 컴포넌트를 import 할 수 없는 이유
 
 - 아주 복잡한 Next App을 개발하다 보면 컴포넌트 개수가 굉장히 많아지기 때문에 이런 import 실수가 발생하게 될 수 있다. 이럴 때마다 중간중간에 런타임 에러가 발생하면 개발 진행 도중에 굉장히 불편할 수 있기 때문에 Next.js는 이럴 때 오류를 발생시키는 대신에 그냥 서버 컴포넌트를 클라이언트 컴포넌트로 바꿔버린다.
@@ -216,11 +229,15 @@ export default async function Page({
 - `직렬화 되지 않는 Props`란
 - `직렬화`(serialization)이란 객체, 배열, 클래스 등의 복잡한 구조의 데이터를 네트워크 상으로 전송하기 위해 아주 단순한 형태(문자열, Byte)로 변환하는 것
 
+  <img width='800px' src='https://github.com/user-attachments/assets/c3bfcc29-3ae1-466c-8955-d15ba7fdb94e' />
+  
   > 직렬화 (serialization)
 
 - 참고로 `JavaScript 함수는 아주 특별하게 직렬화가 불가능하다.` JavaScript의 함수는 코드 블럭들을 포함하고 있는 특수한 형태를 가지고 있기도 하고, 클로저나 렉시컬 스코프 등의 다양한 환경에 의존해 있는 경우가 많기 때문에 그러한 모든 정보들을 다 단순한 문자열이나 바이트의 형태로 표현할 수가 없기 때문이다.
 - 서버 컴포넌트와 클라이언트 컴포넌트가 아래와 같이 계층 구조를 가지고 있을 때, 함수라는 값은 직렬화 될 수 없기 때문에 props로써 전달될 수 없다.
 
+  <img width='800px' src='https://github.com/user-attachments/assets/7ea4774e-aa6c-4d94-8eb1-aa85fcd205db' />
+  
   > 서버 컴포넌트에서 클라이언트 컴포넌트에게 함수는 Props는 전달 불가하다.
 
 - 이러한 이유는 구체적으로 서버 컴포넌트가 Next 서버에서 어떻게 실행되는지 먼저 살펴보면 훨씬 더 쉽게 이해할 수 있다.
@@ -229,6 +246,8 @@ export default async function Page({
 
 - 서버 컴포넌트는 앞서 살펴봐온 바와 같이 사전 렌더링이 이루어질 때 클라이언트 컴포넌트와 함께 실행되어 완성된 HTML 페이지를 생성한다. 그런데 이 설명은 간력화된 버전이다. 모든 과정을 다 나열해보면, 먼저 페이지를 구성하는 모든 컴포넌트들 중에서 서버 컴포넌트들 먼저 실행이 되고 난 이후에 클라이언트 컴포넌트들이 뒤이어 실행이된다.
 
+  <img width='800px' src='https://github.com/user-attachments/assets/d7d892e6-60e1-4f77-adca-e1733e12a370' />
+  
   > 서버 컴포넌트의 동작 방식
 
 - 추가로 알아두어야 할 점은 서버 컴포넌트들만 따로 실행을 시키게 되면 그 결과로 HTML 태그가 바로 생성되는 것이 아니라, `RSC Payload`라는 JSON과 비슷한 형태의 직렬화된 문자열이 생성된다는 점이다.
@@ -239,6 +258,8 @@ export default async function Page({
   - import로 연결된 클라이언트 컴포넌트의 위치
   - 클라이언트 컴포넌트에게 전달하는 Props 값
 
+  <img width='800px' src='https://github.com/user-attachments/assets/29ff8e08-f5a4-45e2-929a-c3d3a5cd902f' />
+  
   > RSC Payload 예시
 
 - 서버 컴포넌트들을 먼저 실행해서 RSC Payload라는 형태로 직렬화하는 과정에서 자신의 자식인 클라이언트 컴포넌트에게 함수 형태의 값을 Props로 전달하고 있다면 그 함수 또한 직렬화가 되어서 RSC Payload에 함께 포함이 되어야 한다. 하지만 JavaScript 함수라는 값은 직렬화가 불가능한 값이기 때문에 안 된다.
