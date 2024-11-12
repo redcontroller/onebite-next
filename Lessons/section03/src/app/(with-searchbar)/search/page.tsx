@@ -1,8 +1,19 @@
+import BookItem from '@/components/book-item';
+import books from '@/mock/books.json';
+
 export default async function Page({
   searchParams,
 }: {
   searchParams: Promise<{ q: string }>;
 }) {
   const { q } = await searchParams;
-  return <div>Search Page : {q}</div>;
+  console.log(q);
+
+  return (
+    <div>
+      {books.map((book) => (
+        <BookItem key={book.id} {...book} />
+      ))}
+    </div>
+  );
 }
