@@ -28,14 +28,14 @@ npx create-next-app@latest section03
 
 - Page Router 버전의 페이지 라우팅은 pages 폴더 하위에 생성해둔 파일의 이름이 곧 경로가 되었다.
 
-  <img width='800px' src='https://github.com/user-attachments/assets/d3461cb6-84fe-4504-a267-1e99bdee433c' />
+  <img width='500px' src='https://github.com/user-attachments/assets/d3461cb6-84fe-4504-a267-1e99bdee433c' />
 
   > Page Router 버전의 페이지 라우팅 설정
 
 - App Router 버전의 페이지 라우팅은 app 폴더 하위에 `page.tsx`라는 이름을 갖는 파일만 페이지 컴포넌트 파일로 취급된다.
 
-  <img width='800px' src='https://github.com/user-attachments/assets/7dce03e1-91d5-4915-871e-f4453d87190b' />
-  <img width='800px' src='https://github.com/user-attachments/assets/b519c731-c3ef-4245-8769-efb3b17ff5ec' />
+  <img width='500px' src='https://github.com/user-attachments/assets/7dce03e1-91d5-4915-871e-f4453d87190b' />
+  <img width='500px' src='https://github.com/user-attachments/assets/b519c731-c3ef-4245-8769-efb3b17ff5ec' />
 
   > App Router 버전의 페이지 라우팅 설정
 
