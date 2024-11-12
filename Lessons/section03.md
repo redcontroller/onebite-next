@@ -270,18 +270,25 @@ export default async function Page({
 - App Router 버전에서는 Server Component가 추가되어 방식이 아주 작지만 중요한 차이점이 하나 발생하게 된다.
 - App Router 버전의 Next.js 앱에서도 Page Router 버전과 마찬가지로 초기 접속 요청 이후에 발생하게 되는 페이지 이동들은 모두 기본적으로는 클라이언트 사이드 렌더링 방식으로 처리를 하게 된다.
 - 이때 페이지 이동을 위해서는 브라우저가 이동할 페이지에 대한 데이터가 필요하기 때문에 클라이언트 컴포넌트들의 정보를 포함하는 `JS bundle`과 동시에 서버 컴포넌트들의 정보를 포함하는 `RSC Payload`를 함께 전달해 주게 된다. 브라우저에서는 이렇게 받은 JS bundle을 실행해서 RSC Payload와 합쳐서 페이지를 적절히 교체하게 된다.
+![2024-11-12 07 21 14](https://github.com/user-attachments/assets/490aaa61-06f6-47d6-825b-b1040a350047)
 
-> App Router 버전의 페이지 이동 작동 방식
+  <img width='800px' src='' />
+  
+  > App Router 버전의 페이지 이동 작동 방식
 
 - Next App일 실행하고 네트워크 텝에서 `Fetch/XHR`이라는 요청만 필터링되게 한 후에, `/search` 페이지로 이동해보면 서치 페이지로 이동을 잘 하면서 `search?_rsc` 라고 해서 현재 페이지에 대한 `RSC Payload`를 잘 불러온 것을 확인할 수 있다.
 - `RSC Payload`를 Preview 탭에서 보면 굉장히 복잡한 직렬화된 텍스트가 전달된 것을 확인할 수 있다.
 
+  <img width='800px' src='https://github.com/user-attachments/assets/c32fa6d8-f4b7-42a5-9483-3701b4e89881' />
+  
   > 서치 페이지로 이동하면서 불러온 RSC Payload
 
 - RSC Payload가 정상적으로 나오지 않는 경우는 오류가 아니라 캐싱 됐기 때문이다. 이때는 브라우저의 새로고침 아이콘을 마우스 우클릭으로 `캐시 비우기 및 강력 새로고침`을 하거나 단축키 `Ctrl + Shift + R`을 통해 캐시를 지운 다음 인덱스 페이지에서 서치 페이지로 이동을 다시 해보면 된다.
 - 서치 페이지로 이동한 다음에 보니 RSC 페이로드만 전달을 받고 있다. 이렇게 되는 이유는 우리가 현재 이동한 서치 페이지가 서버 컴포넌트로만 이루어져 있기 때문이다. 이런 경우에는 페이지 이동 시에 JS bundle로 전달될 클라이언트 컴포넌트가 없어서 RSC Payload만 전달되는 것이다.
 - 이전에 실험용으로 만들어둔 ClientComponent를 서치 페이지 하위에 렌더링 되도록 배치하고, JS bundle도 확인하기 위해서 네트워크 탭을 `All`로 변경한 뒤 인덱스 페이지에서 서치 페이지로 이동을 해보면 RSC Payload와 page.js로 되어 있는 JS bundle 파일을 함께 확인할 수 있다.
 
+  <img width='800px' src='https://github.com/user-attachments/assets/48286317-519a-42f3-8b80-0576aea2c079' />
+  
   > 네트워크 텝에서 확인할 수 있는 RSC Payload와 JS bundle
 
 - App Router 버전의 페이지 이동은 기본적으로는 Page Router 버전의 페이지 이동과 거의 동일하게 이루어지지만 서버 컴포넌트의 추가로 인해서, 서버 컴포넌트는 `RSC Payload`로 그리고 클라이언트 컴포넌트는 그 다음에 다운로드 되는 `JS bundle`로 전달이 되는 차이점이 생기게 되었다.
@@ -293,6 +300,8 @@ export default async function Page({
 - `Pre-petching` 이란 현재 페이지에서 링크들이 존재해서 이동할 가능성이 있는 모든 페이지의 데이터를 미리 다 불러와 놓는 동작을 프리패칭이라고 말한다.
 - 프리패칭은 개발모드에서는 잘 동작하지 않기 때문에, 프로덕션 모드로 실행하여 프리패칭 동작을 확인할 수 있다.
 
+  <img width='800px' src='https://github.com/user-attachments/assets/30d878df-4911-4de2-a9b9-fb2750fc0fd3' />
+  
   > 네트워크 텝에서 프리패칭 결과 확인
   >
   > > **항목의 Request URL** <br>
@@ -305,6 +314,8 @@ export default async function Page({
 - 빌드 결과를 보면 App Router 버전에서 존재하는 모든 페이지는 기본적으로 스태틱하거나 또는 다이나믹한 페이지로 나뉘게 되는데, `Static Page`는 Page Router로 치면 `SSG 방식으로 빌드 타임에 미리 생성된 정적인 페이지`라고 생각하면 된다. 반대로 `Dynamic Page`는 Page Router로 치면 `SSR 방식으로 브라우저의 요청을 받을 때 마다 생성되는 페이지`라고 생각하면 된다.
 - 페이지를 나누게 되는 기준은, 기본적으로 모든 페이지가 `Static page`가 되지만 먄약 페이지 내부에서 쿼리 스트링을 꺼내 온다던가 또는 URL 파라미터를 꺼내서 쓴다던가 빌드타임에 생성하기 어려운 동작을 수행하는 경우에는 자동으로 `Dynamic Page`로 설정이 된다.
 - 북 페이지의 경우에는 요청이 들어왔을 때 URL 파라미터를 꺼내다가 써야 하기 때문에 동적인 페이지로 설정이 되었고, 서치 페이지의 경우에도 쿼리 스트링에 따라서 다르게 동작하기 때문에 동적인 페이지로 설정되었다. 그 외 인덱스 페이지나 Not Found 페이지의 경우에는 아무것도 설정을 따로 해준 게 없기 때문에 기본적으로 정적 페잊로 설정이 된 것을 확인할 수 있다.
+
+  <img width='800px' src='https://github.com/user-attachments/assets/a2d86a17-ac5a-470a-87b4-a369e0a8af12' />
 
   > 빌드 결과
 
