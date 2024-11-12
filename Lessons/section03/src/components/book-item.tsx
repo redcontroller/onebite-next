@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import style from './book-item.module.css';
-import { BookData } from '../app/types';
+import { BookData } from '../types';
 
 export default function BookItem({
   id,
