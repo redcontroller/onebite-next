@@ -270,17 +270,16 @@ export default async function Page({
 - App Router 버전에서는 Server Component가 추가되어 방식이 아주 작지만 중요한 차이점이 하나 발생하게 된다.
 - App Router 버전의 Next.js 앱에서도 Page Router 버전과 마찬가지로 초기 접속 요청 이후에 발생하게 되는 페이지 이동들은 모두 기본적으로는 클라이언트 사이드 렌더링 방식으로 처리를 하게 된다.
 - 이때 페이지 이동을 위해서는 브라우저가 이동할 페이지에 대한 데이터가 필요하기 때문에 클라이언트 컴포넌트들의 정보를 포함하는 `JS bundle`과 동시에 서버 컴포넌트들의 정보를 포함하는 `RSC Payload`를 함께 전달해 주게 된다. 브라우저에서는 이렇게 받은 JS bundle을 실행해서 RSC Payload와 합쳐서 페이지를 적절히 교체하게 된다.
-![2024-11-12 07 21 14](https://github.com/user-attachments/assets/490aaa61-06f6-47d6-825b-b1040a350047)
 
-  <img width='800px' src='' />
-  
+  <img width='800px' src='https://github.com/user-attachments/assets/490aaa61-06f6-47d6-825b-b1040a350047' />
+
   > App Router 버전의 페이지 이동 작동 방식
 
 - Next App일 실행하고 네트워크 텝에서 `Fetch/XHR`이라는 요청만 필터링되게 한 후에, `/search` 페이지로 이동해보면 서치 페이지로 이동을 잘 하면서 `search?_rsc` 라고 해서 현재 페이지에 대한 `RSC Payload`를 잘 불러온 것을 확인할 수 있다.
 - `RSC Payload`를 Preview 탭에서 보면 굉장히 복잡한 직렬화된 텍스트가 전달된 것을 확인할 수 있다.
 
   <img width='800px' src='https://github.com/user-attachments/assets/c32fa6d8-f4b7-42a5-9483-3701b4e89881' />
-  
+
   > 서치 페이지로 이동하면서 불러온 RSC Payload
 
 - RSC Payload가 정상적으로 나오지 않는 경우는 오류가 아니라 캐싱 됐기 때문이다. 이때는 브라우저의 새로고침 아이콘을 마우스 우클릭으로 `캐시 비우기 및 강력 새로고침`을 하거나 단축키 `Ctrl + Shift + R`을 통해 캐시를 지운 다음 인덱스 페이지에서 서치 페이지로 이동을 다시 해보면 된다.
@@ -288,7 +287,7 @@ export default async function Page({
 - 이전에 실험용으로 만들어둔 ClientComponent를 서치 페이지 하위에 렌더링 되도록 배치하고, JS bundle도 확인하기 위해서 네트워크 탭을 `All`로 변경한 뒤 인덱스 페이지에서 서치 페이지로 이동을 해보면 RSC Payload와 page.js로 되어 있는 JS bundle 파일을 함께 확인할 수 있다.
 
   <img width='800px' src='https://github.com/user-attachments/assets/48286317-519a-42f3-8b80-0576aea2c079' />
-  
+
   > 네트워크 텝에서 확인할 수 있는 RSC Payload와 JS bundle
 
 - App Router 버전의 페이지 이동은 기본적으로는 Page Router 버전의 페이지 이동과 거의 동일하게 이루어지지만 서버 컴포넌트의 추가로 인해서, 서버 컴포넌트는 `RSC Payload`로 그리고 클라이언트 컴포넌트는 그 다음에 다운로드 되는 `JS bundle`로 전달이 되는 차이점이 생기게 되었다.
@@ -301,7 +300,7 @@ export default async function Page({
 - 프리패칭은 개발모드에서는 잘 동작하지 않기 때문에, 프로덕션 모드로 실행하여 프리패칭 동작을 확인할 수 있다.
 
   <img width='800px' src='https://github.com/user-attachments/assets/30d878df-4911-4de2-a9b9-fb2750fc0fd3' />
-  
+
   > 네트워크 텝에서 프리패칭 결과 확인
   >
   > > **항목의 Request URL** <br>
@@ -325,4 +324,3 @@ export default async function Page({
 ## 한입북스 UI 구현하기
 
 - App Router부터는 Router 객체에 query property가 제공이 되지 않기 때문에 App Router에서는 이런 Query String을 불러오려면 반드시 `useSearchParams`라는 추가적인 Next가 제공(`next/navigation`)하는 Hook을 이용해야 된다.
--
