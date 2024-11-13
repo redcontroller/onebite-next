@@ -2,34 +2,34 @@
 
 - 기존에는 사전 렌더링의 과정 중에 Next Server 측에서 또 다른 백엔드 서버나 DB로부터 데이터 페칭해 오기 위해서 페이지 역할을 하는 파일 안에 SSR을 의미하는 `getServerSideProps`, SSG 또는 ISR을 의미하는 `getStaticProps`, 동적 경로를 갖는 페이지를 정적으로 생성하기 위한 `getStaticPaths` 등의 오직 서버 측에서만 실행이 되는 함수들을 이용했었다.
 
-  <img width='500px' src='' />
-  <img width='500px' src='' />
+  <img width='700px' src='https://github.com/user-attachments/assets/0278255e-e48b-4604-a017-0ab45976ac04' />
+  <img width='700px' src='https://github.com/user-attachments/assets/97fc0a43-4cbc-4fa0-a72f-fec2282f9f26' />
 
   > 기존의 데이터 페칭 방식
 
 - 기존에 특수한 함수들을 통해서 데이터를 직접 페칭해와서 페이지 컴포넌트의 props로 데이터를 넘겨주는 구조로 작업을 진행해왔다.
 - 이렇게 해야만 했었던 이유는 Page Router 버전의 Next 앱에서는 서버 컴포넌트의 개념이 없었기 때문에 모든 컴포넌트가 다 클라이언트 컴포넌트로서 동작했기 때문이다. 서버에서 실행이 불필요한 컴포넌트 또한 클라이언트 컴포넌트로서 서버서 클라이언트 모두 동일하게 한 번씩 실행되었다. 따라서 Page Router 버전의 Next App 에서는 우리가 페이지 컴포넌트 안에 데이터 페칭 로직을 직접 작성하게 되면 해당 로직은 서버 측에서만 실행되지 않고 브라우저에서도 하이드레이션 과정에서 한 번 더 실행이 될 것이다. 그래서 서버 측에서만 데이터를 불러오기 위해서는 앞서 설명했던 `getServerSideProps`, `getStaticProps`, `getStaticPaths` 와 같은 특수한 함수를 이용했어야만 했다.
 
-  <img width='500px' src='' />
+  <img width='700px' src='https://github.com/user-attachments/assets/fd29f0da-0279-44ac-af83-e4d73e97a453' />
 
   > 기존의 데이터 페칭 방식에 특수한 함수가 필요했던 이유
 
 - 특수한 함수를 통한 데이터 페칭은 서버 측에서 불러온 모든 데이터는 결국 컴포넌트 트리 최상단에 위치하는 페이지 컴포넌트에게만 props로 전달이 될 것이기 때문에 최상단의 페이지 컴포넌트로부터 데이터를 필요로 하는 말단의 모든 컴포넌트들까지 props나 Context API 등을 활용해서 데이터를 넘겨 줘야 한다는 아주 큰 문제점도 있다.
 
-  <img width='500px' src='' />
+  <img width='700px' src='https://github.com/user-attachments/assets/e50c214a-a4bd-4a0c-a903-ce90fed394e9' />
 
   > 기존의 데이터 페칭 방식의 가장 큰 문제점
 
 - 서버 컴포넌트가 추가된 App Router 버전의 Next App에서는 더이상 이런 문제를 겪지 않아도 된다.
 - `Server component`는 오직 서버에서만 실행되기 때문에 놀랍게도 `async` 키워드를 붙여서 서버 컴포넌트 함수를 비동기 함수로 만든 다음에 해당하는 컴포넌트 내부에서 `await` 키워드와 fetch 메서드를 활용해서 데이터를 직접 불러오도록 하는 데이터 페칭 로직을 페이지 컴포넌트 안에 작성해도 아무런 문제가 발생하지 않는다.
 
-  <img width='500px' src='' />
-  <img width='500px' src='' />
-  <img width='500px' src='' />
+  <img width='700px' src='https://github.com/user-attachments/assets/8347e39f-d2d7-4c65-ad10-540c051f5f55' />
+  <img width='700px' src='https://github.com/user-attachments/assets/abd50718-588c-4e63-93e0-61d368aaa36b' />
+  <img width='700px' src='https://github.com/user-attachments/assets/e1d2b7c6-2698-4d95-9622-849bf306b1d0' />
 
   > App Router 버전의 서버 컴포넌트의 놀라운 점
 
-- 이 부분이 놀라운 이유는, 원래 리액트의 컴포넌트 (React client component)에서는 async 키워드를 붙여서 비동기 함수로 설정할 수는 없었다. 그렇게 되는 이유는 대략적으로 **클라이언트 컴포넌트들은 브라우저에서도 똑같이 동작을 해야 되기 때문**에 `async` 키워드를 붙여서 비동기로 동작하게 설정할 경우에는 props의 전달이나, useMemo나 useCallback 등을 사용하는 memoization 차원에서 여러가지 문제를 일으킬 수 있기 때문이었다.
+- 이 부분이 놀라운 이유는, 원래 리액트의 컴포넌트 (React client component)에서는 async 키워드를 붙여서 비동기 함수로 설정할 수는 없었다. 그렇게 되는 이유는 대략적으로 **클라이언트 컴포넌트들은 브라우저에서도 똑같이 동작을 해야 되기 때문 (순수함수)**에 `async` 키워드를 붙여서 비동기로 동작하게 설정할 경우에는 props의 전달이나, useMemo나 useCallback 등을 사용하는 memoization 차원에서 여러가지 문제를 일으킬 수 있기 때문이었다.
 - 그런데 `React server component`는 브라우저에서는 실행되지 않기 때문에 당연히 서버 컴포넌트에서는 `async` 키워드를 붙여서 비동기 함수로써 사용해도 전혀 문제가 발생하지 않는다. 그렇기 때문에 `await` 키워드와 함께 비동기적으로 컴포넌트 내에서 직접 데이터를 페칭까지 해줄 수 있는 것이다.
 - App Router 버전의 데이터 페칭에서는 Page Router에서 사용하던 특수한 함수들은 더 이상 사용하지 않고, 대신에 컴포넌트 내부에서 직접 자신이 필요로 하는 데이터를 불러와서 바로 렌더링에 사용할 수 있도록 데이터를 페칭하는 방식이 굉장히 크게 변경이 되게 된다.
 - 이제부터는 더 이상 페이지 컴포넌트로부터 여러 컴포넌트들에게 데이터를 Props나 Context API를 활용해서 힘겹게 넘겨줄 필요가 없어진다. 왜냐하면 데이터가 필요한 컴포넌트가 있다면 해당하는 컴포넌트가 직접 데이터를 페칭해오면 되기 떄문에 우리가 만들어야 되는 페이지의 컴포넌트 구조가 아무리 복잡해진다고 하더라도 무리 없이 데이터 페칭을 구현할 수 있게 된다.
@@ -98,7 +98,7 @@ async function AllBooks() {
   const response = await fetch(`~/api`, { cache: 'no-store' });
   ```
 
-  <img width="500px" src="">
+  <img width="700px" src="https://github.com/user-attachments/assets/1318e335-5a97-4bcf-808b-9684f1029deb">
 
   > Next fetch 메서드의 "no-store" 캐시 옵션 동작 방식
 
@@ -118,9 +118,9 @@ const nextConfig = {
 export default nextConfig;
 ```
 
-  <img width="500px" src="">
+  <img width="700px" src="https://github.com/user-attachments/assets/4368cc11-8412-4fc4-9ef2-9fe8fb89a8b9">
 
-> 터미널에 출력되는 서버측 데이터 페칭 로그 (no-store)
+  > 터미널에 출력되는 서버측 데이터 페칭 로그 (no-store)
 
 - 로그 메시지를 보면 우리가 AllBooks에 설정한 "no-store" 캐시 옵션에 의해서 Cache가 잘 스킵이 된 것을 확인할 수 있다.
 - 그런데 우리가 캐시 설정을 하지 않은 RecoBooks에서도 캐시가 스캡되었다고 출력이 되며, `auto no cache`라고 해서 자동으로 캐싱이 되지 않고 있음을 알려주고 있다.
@@ -135,13 +135,13 @@ export default nextConfig;
   const response = await fetch(`~/api`, { cache: 'force-cache' });
   ```
 
-  <img width="500px" src="">
+  <img width="700px" src="https://github.com/user-attachments/assets/776679a1-c7ca-4ed6-a252-d8f41c6a0d76">
 
   > Next fetch 메서드의 "force-cache" 캐시 옵션 동작 방식
 
 - Cache 설정이 "force-cache"로 설정된 데이터 요청이 발생하게 되면 데이터 캐시에서 먼저 저장된 데이터를 찾아보게 된다. 그런데 처음의 fetch 요청에서는 저장된 데이터가 없기 때문에 `Miss` (없음) 판정이 나게 된다. 이런 때에는 일단 백엔드 서버에게 데이터를 요청하고 다음 요청부터는 새롭게 불러오지 않도록 데이터 캐시 안에 `Set`(저장)하게 된다. 불러온 데이터로는 페이지는 생성해서 브라우저에게 반환한다. 추가적인 페이지 접속 요청이 들어오면 일단 똑같이 사전 렌더링을 진행하면서 데이터 패칭도 실행하게 되는데, 이때는 데이터 페칭 요청의 응답을 앞서 데이터 캐시에 캐싱해둔 데이터가 `Hit` (찾아냄) 되고 실제 백엔드 서버에게는 요청을 보낼 필요가 없기 때문에 그대로 데이터 캐시 안에 들어있던 데이터를 활용해서 빠르게 페이지를 생성하여 브라우저에게 반환한다.
 
-  <img width="500px" src="">
+  <img width="700px" src="https://github.com/user-attachments/assets/163d8bc7-3f0b-4e53-8062-2b6e64d6f565">
 
   > 터미널에 출력되는 서버측 데이터 페칭 로그 (force-cache)
 
@@ -156,9 +156,8 @@ export default nextConfig;
 ```javascript
 const response = await fetch(`~/api`, { next: { revalidate: 3 } });
 ```
-
-  <img width="500px" src="">
-  <img width="500px" src="">
+  <img width="700px" src="https://github.com/user-attachments/assets/fc8627b0-4bda-4ba1-8b23-3a5fd00ebbed">
+  <img width="700px" src="https://github.com/user-attachments/assets/410ea256-50ee-4b42-8b35-507e2ca1dda5">
 
 > Next fetch 메서드의 "next: { revalidate: 3 }" 캐시 옵션 동작 방식
 
@@ -177,8 +176,8 @@ const response = await fetch(`~/api`, { next: { revalidate: 3 } });
 - `Request Memoization`은 데이터 페칭을 최적화해 주는 기능이다.
 - 번역을 하자면 `요청을 기억한다` 정도로 해석할 수 있으며, 페이지를 서버 측에서 렌더링하는 과정에서 레이아웃 컴포넌트나 또는 페이지 컴포넌트처럼 하나의 페이지를 이루고 있는 여러 개의 컴포넌트에서 발생하는 다양한 API 요청들 중에 중복적으로 발생하는 요청들을 캐싱해서 중복된 요청 없이 단 한번만 요청할 수 있도록 자동으로 데이터 페칭을 최적화해주는 기능이다.
 
-  <img width="500px" src="">
-  <img width="500px" src="">
+  <img width="700px" src="https://github.com/user-attachments/assets/c04d4041-e03f-4e1f-8f47-78b1bc613e2e">
+  <img width="700px" src="https://github.com/user-attachments/assets/c30277d1-6fb3-4425-b85e-f7ab2c81b2df">
 
   > 중복된 요청을 제거하여 데이터 페칭을 최적화 해주는 Request Memoization 기능
 
@@ -191,7 +190,7 @@ const response = await fetch(`~/api`, { next: { revalidate: 3 } });
 - 그렇기 때문에 렌더링이 종료된 이후 두번째 접속 요청이 들어왔을 때, 동일한 경로의 데이터 요청이 발생한다고 하더라도 캐시가 `Miss`되어서 새롭게 데이터를 요청하게 되고 그렇게 불러온 데이터를 다시 한번 `Request Memoization`에 똑같이 저장하게 된다.
 - `Request Memoization`이라는 기능은 이렇게 하나의 페이지를 렌더링하는 동안에만 존재하는 캐시로서 오직 중복된 API 요청을 방지하는데 그 목적을 두고 있다.
 
-  <img width="500px" src="">
+  <img width="700px" src="https://github.com/user-attachments/assets/f19044c8-bdd4-4980-b117-70c095e813f5">
 
   > 오해하지 말아야 할 부분: Request Memoization은 하나의 페이지를 렌더링 하는 동안에만 캐싱함
 
@@ -204,8 +203,8 @@ const response = await fetch(`~/api`, { next: { revalidate: 3 } });
 - 기존의 Page Router 버전의 Next.js App에서는 서버 측에서 데이터를 패칭해오려면 `getServerSideProps`나 `getStaticProps` 같은 서버 측에서만 실행되는 함수를 통해서 데이터를 불러와서 페이지 컴포넌트에게 넘겨주는 방식을 사용했다. 하지만 서버 컴포넌트가 도입된 App Router 버전의 Next.js 앱에서는 컴포넌트가 각각 자신이 필요한 데이터를 직접 페칭해오는 방식으로 데이터 페칭이 진행된다.
 - 이런 방식 덕분에 App Router에서는 컴포넌트의 구조가 아무리 복잡해진다고 하더라도 별 문제 없이 각각 필요한 데이터를 컴포넌트 별로 불러와서 독립적으로 사용할 수 있다. 하지만 이러한 패턴을 사용하다 보니 어쩔 수 없이 서로 다른 컴포넌트에서 동일한 데이터를 필요로 하는 예외적인 경우가 반드시 생길수 밖에 없다.
 
-  <img width="500px" src="">
-  <img width="500px" src="">
+  <img width="700px" src="https://github.com/user-attachments/assets/52c8b05a-a505-44fe-9a55-58f667588279">
+  <img width="700px" src="https://github.com/user-attachments/assets/2bb20d87-0cb2-4fe2-bdfc-1ad5d9390703">
 
   > Page Router 버전과 App Router 버전의 데이터 페칭의 패턴 변화
 
