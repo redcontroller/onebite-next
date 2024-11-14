@@ -1,6 +1,20 @@
 import { MovieData } from '@/types';
 import style from './page.module.css';
-import movies from '@/mock/dummy.json';
+import { notFound } from 'next/navigation';
+
+export const dynamicParams = false;
+
+export async function generateStaticParams() {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_SERVER_API_URL}/movie`
+  );
+  if (!response.ok) {
+    throw new Error('Fetch failed: ~/movie');
+  }
+  const movies: MovieData[] = await response.json();
+  // 각 movie 객체 데이터에서 구조분해할당으로 id만 추출해서 사용
+  return movies.map(({ id }) => ({ id: id.toString() }));
+}
 
 export default async function Page({
   params,
@@ -14,6 +28,9 @@ export default async function Page({
     { cache: 'force-cache' }
   );
   if (!response.ok) {
+    if (response.status === 404) {
+      notFound();
+    }
     return <div>오류가 발생했습니다...</div>;
   }
   const movie: MovieData = await response.json();

@@ -1,6 +1,5 @@
 import MovieItem from '@/components/movie-Item';
 import style from './page.module.css';
-import movies from '@/mock/dummy.json';
 import { MovieData } from '@/types';
 
 export default async function Page({
