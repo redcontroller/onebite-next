@@ -5,7 +5,7 @@
 - (2) 빌드 타임이 끝난 이후에 Next 서버가 실제로 가동되었을 때 `/a`페이지로 실제 접속 요청이 들어오게 되면 해당 페이지는 앞선 빌드 타임에 미리 렌더링해서 `Full Router Cache`에 미리 다 저장을 해뒀기 때문에 새롭게 렌더링 할 필요가 없어 `Full Route Cache`가 `Hit`되어서 바로 캐시된 페이지가 브라우저에게 전송된다. 그렇기 때문에 굉장히 빠른 속도로 접속 요청이 처리된다.
 - `Full Route Cache`는 `Page Router 버전의 SSG (정적 사이트 생성) 방식`과 거의 유사하게 빌드 타임에 정적으로 페이지를 미리 다 만들어 놓고 캐시에 보관한 다음에 브라우저 요청이 들어왔을 때는 캐시에 저장된 페이지를 그대로 응답해주는 캐싱 기능이다.
 
-  <img width="700px" src="">
+  <img width="700px" src="https://github.com/user-attachments/assets/3f3dcfc4-1883-481a-9db7-c7136b891333">
 
   > Full Route Cache 동작 방식
 
@@ -49,14 +49,14 @@
       ```
   - `Static Page`: 동적 페이지로 설정될 이유가 없으면 무조건 모든 페이지들이 기본적으로 다 정적 페이지로 설정됨
 
-  <img width="700px" src="">
+  <img width="700px" src="https://github.com/user-attachments/assets/425dfad6-3ba5-4e20-854d-91fba54edf85">
 
   > 동적 페이지와 정적 페이지를 분류하는 기준
 
 - `Dynamic page`의 경우 빌드 타임에 미리 생성되지 않아서 `Full Route Cache`에 저장되지 않기 때문에 브라우저 접속 요청이 들어왔을 때 마다 매번 새롭게 페이지를 렌더링 해줘야 해서 `Static Page`보다는 조금은 느린 속도로 응답이 처리된다. 그렇기 때문에 되도록이면 훨씬 더 빠르게 브라우저에게 응답해줄 수 있도록 대부분의 페이지를 `Full Route Cache`가 적용되는 `Static Page`로써 만드는 것이 더 권장된다.
 
-  <img width="700px" src="">
-  <img width="700px" src="">
+  <img width="700px" src="https://github.com/user-attachments/assets/ae0bfb2c-749d-49ed-9bb0-de33a9aead7e">
+  <img width="700px" src="https://github.com/user-attachments/assets/04ad87c3-b3aa-474a-b6a0-58112b97e260">
 
   > 동적 페이지와 정적 페이지의 동작 방식
 
@@ -69,8 +69,8 @@
 - 구체적을 살펴보면 빌드 타임에 초기 페칭된 데이터가 revalidate 설정 시간 이후에 데이터 캐시가 보관하고 있는데 데이터 페칭 결과는 상하게 (stale) 되는데, 그러면 데이터만 업데이트하면 되는게 아니라 결국엔 페이지까지 똑같이 업데이트를 해줘야 한다. 그래서 revalidate 설정 시간 이후 페이지 접속 요청일 들어오면 `Full Route Cache`에서 `Stale` (상했음)이라고만 표시를 일단 해두고 빠르게 일단 캐싱된 페이지를 응답 해준 다음 서버 측에서 최신 데이터를 다시 불러(Revalidate Data)와서 일단 데이터 캐시를 먼저 갱신한 뒤 다시 페이지까지 렌더링을 해서 pre-fetch 캐시의 값을 업데이트 함으로써 `Full Route Cache`에 보관된 페이지를 최신화 한다.
 - `Full Route Cache`가 최신화된 이후에 발생하는 요청들에 대해서는 풀 라이트 캐시에 새롭게 업데이트가 된 최신의 페이지를 반환하게 된다.
 
-  <img width="700px" src="">
-  <img width="700px" src="">
+  <img width="700px" src="https://github.com/user-attachments/assets/99f4aa9d-d4d6-48c8-928e-bd1db3716213">
+  <img width="700px" src="https://github.com/user-attachments/assets/58180f38-ec63-42de-beda-84c4b96ad4d5">
 
   > revalidate 시간이 설정된 Full Route Cache 동작 방식
 
@@ -80,7 +80,7 @@
 
 - useSearchParams는 반드시 suspense 경계에 포함되어야 한다.
 
-  <img width="700px" src="" />
+  <img width="700px" src="https://github.com/user-attachments/assets/e0a68274-c5ac-407e-90d6-875e88620516" />
 
   > 터미널에 출력된 useSearchParams 빌드 에러
 
@@ -110,11 +110,12 @@ return (
 
 ### index 페이지에 캐시 적용하기 (정적 페이지로 설정하기)
 
-  <img width="700px" src="" />
-
-> 빌드 결과 not-found 페이지말고는 모두 동적 페이지인 상황
-
 - 프로젝트를 빌드해보면 동적 페이지로 설정이 되어 있기 때문에 사실상 현재 Next App에는 사전 렌더링된 페이지를 캐싱하는 `Full Route Cache`가 전혀 동작하고 있지 않다.
+
+  <img width="700px" src="https://github.com/user-attachments/assets/9b85da85-9fe5-498f-bc3d-0de9d3b67f6f" />
+
+  > 빌드 결과 not-found 페이지말고는 모두 동적 페이지인 상황
+
 - 권장사항으로 되도록이면 대부분의 페이지를 `Static Page`로 설정해서 `Full Route Cache`캐시가 적용이 되도록 설정하는 것이 브라우저의 접속 요청을 빠르게 처리할 수 있다.
 - 우선 인덱스 페이지에 해당하는 모든 컴포넌트들을 점검해본다. **가장 먼저 체크해야 될 컴포넌트는 App 폴더 바로 아래 layout.tsx 파일처럼 루트 컴포넌트이다.**
 - 왜냐하면 `RootLayout` 컴포넌트 또한 인덱스 페이지에 포함이 된다. 인덱스 페이지를 렌더링 하려면 루트 레이아웃이 당연히 렌더링이 되어야 하기 때문이다. 루트 레이아웃이 포함하고 있는 컴포넌트에 어떠한 `동적 함수(캐싱, 헤더, 쿼리스트링 등)를 사용`하는 데이터 페칭이 존재하는 지 살펴본다.
@@ -123,7 +124,7 @@ return (
 - RecoBooks 컴포넌트에서도 fetch 메서드를 사요하고 있지만 revalidate 옵션을 사용하고 있다. `revalidate` 옵션 자체는 페이지를 다이나믹하게 설정하는 옵션은 아니었기 때문에 그냥 둬도 무방하다.
 - 인덱스 페이지에 포함되는 컴포넌트들을 모두 살펴보며 동적 함수도 없고, 캐싱되지 않는 데이터 패칭도 없도록 변경한 뒤 다시 빌드를 수행해본다.
 
-  <img width="700px" src="" />
+  <img width="700px" src="https://github.com/user-attachments/assets/de25753a-ecd3-4902-bd4d-7dd7f542545e" />
 
   > 데이터 페칭 옵션 변경 후 빌드 결과
 
@@ -149,10 +150,9 @@ export function generateStaticParams() {
 }
 ```
 
-  <img width="700px" src="" />
-  <img width="700px" src="" />
+  <img width="400px" src="https://github.com/user-attachments/assets/41e60d57-ccbd-473d-be3f-a6086163641f" />
 
-> 북 페이지 설정 변경 후 빌드 결과
+  > Static Page로 생성된 페이지들
 
 - `/book/1`, `/book/2`, `/book/3` 페이지가 스태틱 페이지로써 빌드 타임에 미리 생성 완료되어서 서버측에 `Full Route Cache`로써 잘 보관이 되고 있다.
 - 스태틱 페이지로 생성된 페이지들은 `.next/server/app/book` 폴더에서 확인 가능하다.
@@ -167,8 +167,8 @@ export function generateStaticParams() {
 - 확인을 위해서 프로덕션 모드로 실행한 상태에서 브라우저 네트워크 탭을 열고 아직 생성되지 않은 `/book/6` 페이지에 접속해서 북 페이지 6번의 응답 시간을, 새로고침하여 다시 페이지 접속 요청을 보내고 응답된 시간을 비교해볼 수 있다.
 - 초기 요청이 25ms 인 것에 반해, 그 다음 요청은 8ms로 매우 빠른 응답 속도를 보임을 확인할 수 있다.
 
-  <img width="700px" src="" />
-  <img width="700px" src="" />
+  <img width="700px" src="https://github.com/user-attachments/assets/87f7bcc1-7540-43f5-8514-68290dd8c2d4" />
+  <img width="700px" src="https://github.com/user-attachments/assets/e087b018-857d-4d66-9680-3f067cc4b432" />
 
   > 동적 생성되는 북 페이지의 초기 접속과 재접속 응답속도 차이
 
