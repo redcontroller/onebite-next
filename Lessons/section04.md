@@ -120,7 +120,7 @@ export default nextConfig;
 
   <img width="700px" src="https://github.com/user-attachments/assets/4368cc11-8412-4fc4-9ef2-9fe8fb89a8b9">
 
-  > 터미널에 출력되는 서버측 데이터 페칭 로그 (no-store)
+> 터미널에 출력되는 서버측 데이터 페칭 로그 (no-store)
 
 - 로그 메시지를 보면 우리가 AllBooks에 설정한 "no-store" 캐시 옵션에 의해서 Cache가 잘 스킵이 된 것을 확인할 수 있다.
 - 그런데 우리가 캐시 설정을 하지 않은 RecoBooks에서도 캐시가 스캡되었다고 출력이 되며, `auto no cache`라고 해서 자동으로 캐싱이 되지 않고 있음을 알려주고 있다.
@@ -156,6 +156,7 @@ export default nextConfig;
 ```javascript
 const response = await fetch(`~/api`, { next: { revalidate: 3 } });
 ```
+
   <img width="700px" src="https://github.com/user-attachments/assets/fc8627b0-4bda-4ba1-8b23-3a5fd00ebbed">
   <img width="700px" src="https://github.com/user-attachments/assets/410ea256-50ee-4b42-8b35-507e2ca1dda5">
 
