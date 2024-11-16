@@ -232,27 +232,27 @@ export const dynamic = 'auto'; // 'force-dynamic', 'force-static', 'error'
 - `export const dynamic = 'auto'` 설정은 서버 컴포넌트를 분류하는 원칙에 따라서 동적함수나 데이터 캐시를 사용 유무로 페이지 유형을 자동으로 설정하게 된다. 해당 옶션은 기본값이기 때문에 생략도 적용된다.
 - `export const dynamic = 'force-dynamic'` 설정은 페이지를 강제로 Dynamic 페이지로 설정한다.
 
-  <img width='500px' src=''>
+  <img width='500px' src='https://github.com/user-attachments/assets/492c4541-728a-4eaf-a197-7472d2bb263f'>
 
   > Route Segment Option (dynamic)으로 Dynamic Page로 설정
 
 - `export const dynamic = 'force-static'` 설정은 `force-dynamic` 설정과 반대로 페이지를 강제로 Static 페이지로 설정한다. 현재 동적 페이지로 설정되어 있는 search 페이지에 `force-static`로 설정해주면 이제는 이 페이지가 어떤 동적 함수나 데이터 패칭을 사용했던 간에 무조건 강제적으로 다 Static 페이지로 설정된다. 또 이때 페이지 내부에서 사용한 쿼리스트링 같은 동적함수들은 모두 다 `undefined` (빈값)을 반환하도록 자동으로 설정된다. 그리고 마찬가지로 데이터 패칭도 만약 'no-store' 로 설정이 되어 데이터 캐싱이 없더록 설정이 되어 있다면 강제로 `force-cache` 설정으로 캐싱 되도록 변경이 된다. 즉, `force-static`으로 설정을 해주면 무조건 Static 페이지로서 작동하도록 알아서 다 변경이 된다.
 
-  <img width='500px' src=''>
+  <img width='500px' src='https://github.com/user-attachments/assets/8a423ec9-53a8-4ecf-97a8-fdc85932ca0b'>
 
   > Route Segment Option (dynamic)으로 Static Page로 설정
 
 - 그런데 이러한 특징 때문에 한 가지 부작용이 발생할 수 있다. 예를들어 쿼리스트링 값에 의존하고 있는 서치 페이지를 `dynamic`이라는 `Route Segment Option`으로 강제로 Static Page로 설정해 버리면 검색 기능이 제대로 동작하지 않는 문제가 발생할 수 있다. `force-static`으로 설정했기 때문에 동적함수 값은 무조건 undefined (빈)값으로 설정이 되어 서치 페이지에서는 현재 검색어가 무엇인지 모르게 된다. 그렇기 때문에 어떠한 검색어를 입력해도 검색 결과가 텅 비게 되는 현상이 발생한다.
 - 그렇기 때문에 `Route Segment Option`의 세 번째 값인 `false-static`은 이런 기능상의 부작용을 발생시킬 수 있다는 점까지 기억해야 한다.
 
-  <img width='500px' src=''>
+  <img width='500px' src='https://github.com/user-attachments/assets/e2b668bd-119a-4f5e-b206-903729820b7d'>
 
   > 강제로 Static Page로 설정하여 아무런 검색 결과가 나타나지 않음
 
 - `Route Segment Option`의 네번째 값인 `error` 옵션값은 페이지를 강제로 Static 페이지로 설정한다. 게다가 `false Static`과는 조금 다르게 동적함수를 사용하거나 캐싱되지 않는 데이터 패칭 있을 경우 등의 Static Page로 설정하면 안되는 이유가 있다면 그때는 빌드 오류를 발생시키는 옵션이다.
 - 그래서 `error` 옵션은 앞서 살펴본 `force-static` 보다는 조금 더 버그가 발생할 가능성은 낮다.
 
-  <img width='500px' src=''>
+  <img width='500px' src='https://github.com/user-attachments/assets/df6cbcb1-887a-4e3f-8cd1-60123aac5177'>
 
   > Static Page로 설정하면 안되기 때문에 빌드 시점에서 발생하는 에러
 
@@ -267,22 +267,24 @@ export const dynamic = 'auto'; // 'force-dynamic', 'force-static', 'error'
 - 브라우저(클라이언트) 측에 저장되는 캐시로 Next App에서 발생하는 페이지 이동을 좀 더 효율적으로 진행하기 위해 페이지의 일부 데이터를 보관하는 기능을 말한다.
 - 우리가 브라우저에서 특정 페이지에 접속할 때, Next Server는 브라우저에게 (1) 사전 렌더링된 HTML 파일과 (2) 서버 컴포넌트의 데이터를 포함하고 있는 RSC Payload와 (3) 클라이언트들의 데이터를 포함하고 있는 JS Bundle를 전달하게 된다.
 
-  <img width='500px' src=''>
+  <img width='500px' src='https://github.com/user-attachments/assets/946f0441-765d-414a-8b79-e558e995e12a'>
 
   > 특정 페이지에 접속하면 브라우저(클라이언트)에 로드되는 파일
 
 - RSC Payload를 자세히 살펴보자.
 - 공통된 레이아웃이 적용되고 있는 인덱스 페이지와 서치 페이지를 순차적으 접속한다고 했을 때, 브라우저(클라이언트)는 루트 레이아웃과 서치바 레이아웃을 두 번이나 중복해서 전달받는 상황이 된다.
 
-  <img width='500px' src=''>
-
+  <img width='500px' src='https://github.com/user-attachments/assets/ae1472a8-9c7b-4770-a884-3e5d85d84c06'>
+  <img width='500px' src='https://github.com/user-attachments/assets/5707f581-1b7a-4272-9cfa-297aaef481be'>
+  <img width='500px' src='https://github.com/user-attachments/assets/b21803b3-e4a7-4c90-a3bb-e2cab838a486'>
+  
   > 브라우저에서 중복해서 전달받게 되는 레이아웃 컴포넌트
 
 - Next App에서는 인덱스 페이지와 서치 페이지와 같이 공통된 레이아웃을 사용하는 경우에는 중복된 RSC Payload를 여러차례 계속해서 브라우저에서 요청하거나 전달받게 된다는 문제점이 발생하게 된다. Next.js는 이러한 비효율을 해결하기 위해 `Client Router Cache`라는 새로운 캐시 공간을 하나 추가해서 이제부터 페이지에 접속하려고 할 때 여러가지 과정들을 거쳐서 서버로부터 전달받게 되는 RSC 페이로드 값들 중에 레이아웃에 해당하는 부분의 데이터만 따로 추출을 해서 클라이언트 라우터 캐시라는 이름으로 보관하도록 자동으로 설정을 해주게 된다.
 - 다시말해 접속 요청을 받은 Next 서버가 브라우저에게 보내주는 여러가지 페이지 데이터들 중에 루트 레이아웃이나 서치바 레이아웃처럼 접속하는 페이지의 레이아웃을 담당하는 RSC Payload의 데이터만 `Client Router Cache`라는 공간에 캐싱하게 된다.
 - 그렇기 때문에 앞으로는 새로운 페이지를 요청할 때에도 이전에 클라이언트 라우터 캐시에 저장해둔 레이아웃들은 그대로 사용하여 마치 캐싱된 데이터처럼 그대로 레이아웃들을 재사용하게 되고, 그 외의 컴포넌트나 기타 등등의 서버 컴포넌트에 해당하는 데이터들은 따로 요청해서 별로도 받아오도록 동작하게 된다.
 
-  <img width='500px' src=''>
+  <img width='500px' src='https://github.com/user-attachments/assets/a9b1993a-e865-4000-a1ca-805767298959'>
 
   > Client Router Cache를 동작 방식
 
@@ -307,10 +309,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 }
 ```
 
-  <img width='500px' src=''>
-  <img width='500px' src=''>
+  <img width='500px' src='https://github.com/user-attachments/assets/8709fe0a-3a6f-445d-b65c-f4beff4c3a5c'>
+  <img width='500px' src='https://github.com/user-attachments/assets/8431a98f-2c3f-4365-be99-850abd27f24c'>
 
-> Client Router Cache에 보관되어 페이지 이동에도 레이아웃 컴포넌트의 시간이 변경되지 않음
+  > Client Router Cache에 보관되어 페이지 이동에도 레이아웃 컴포넌트의 시간이 변경되지 않음
 
 - 클라이언트 라우터 캐시에 보관되는 레이아웃 컴포넌트는 페이지 이동이 있다고 하더라도 캐싱된 레이아웃 컴포넌트가 그대로 렌더링이 되는 것이 때문에 결과적으로 해당 레이아웃 컴포넌트는 다시 렌더링이 되고 있지 않는 것이다.
 - 새로고침을 눌러보면 레이아웃이 다시 불러와져서 렌더링이 새롭게 되어 시간이 변경된다. 왜냐하면 클라이언트 라우터 캐시는 기본적으로 새로고침이 되면 모두 사라지기 떄문이다. 그래서 `Client Router Cache`에 레이아웃 컴포넌트가 저장되었다고 하더라도 새로고침을 하거나 아예 브라우저 탭을 껐다가 다시 접속하는 경우에는 캐싱된 데이터가 지워져 동작하지 않는다.
