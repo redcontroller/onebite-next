@@ -1,5 +1,6 @@
 import BookItem from '@/components/book-item';
 import { BookData } from '@/types';
+import { delay } from '@/util/delay';
 
 // 특정 페이지의 유형을 강제로 Static 페이지로 설정
 // export const dynamic = 'error'; // force-static
@@ -9,6 +10,7 @@ export default async function Page({
 }: {
   searchParams: Promise<{ q: string }>;
 }) {
+  await delay(1500); // 1.5초
   const { q } = await searchParams;
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_SERVER_URL}/book/search?q=${q}`,
