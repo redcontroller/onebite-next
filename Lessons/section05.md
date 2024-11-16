@@ -152,7 +152,7 @@ export function generateStaticParams() {
 
   <img width="400px" src="https://github.com/user-attachments/assets/41e60d57-ccbd-473d-be3f-a6086163641f" />
 
-> Static Page로 생성된 페이지들
+  > Static Page로 생성된 페이지들
 
 - `/book/1`, `/book/2`, `/book/3` 페이지가 스태틱 페이지로써 빌드 타임에 미리 생성 완료되어서 서버측에 `Full Route Cache`로써 잘 보관이 되고 있다.
 - 스태틱 페이지로 생성된 페이지들은 `.next/server/app/book` 폴더에서 확인 가능하다.
@@ -252,7 +252,7 @@ export const dynamic = 'auto'; // 'force-dynamic', 'force-static', 'error'
 - `Route Segment Option`의 네번째 값인 `error` 옵션값은 페이지를 강제로 Static 페이지로 설정한다. 게다가 `false Static`과는 조금 다르게 동적함수를 사용하거나 캐싱되지 않는 데이터 패칭 있을 경우 등의 Static Page로 설정하면 안되는 이유가 있다면 그때는 빌드 오류를 발생시키는 옵션이다.
 - 그래서 `error` 옵션은 앞서 살펴본 `force-static` 보다는 조금 더 버그가 발생할 가능성은 낮다.
 
-  <img width='500px' src='https://github.com/user-attachments/assets/df6cbcb1-887a-4e3f-8cd1-60123aac5177'>
+  <img width='800px' src='https://github.com/user-attachments/assets/df6cbcb1-887a-4e3f-8cd1-60123aac5177'>
 
   > Static Page로 설정하면 안되기 때문에 빌드 시점에서 발생하는 에러
 
@@ -267,16 +267,16 @@ export const dynamic = 'auto'; // 'force-dynamic', 'force-static', 'error'
 - 브라우저(클라이언트) 측에 저장되는 캐시로 Next App에서 발생하는 페이지 이동을 좀 더 효율적으로 진행하기 위해 페이지의 일부 데이터를 보관하는 기능을 말한다.
 - 우리가 브라우저에서 특정 페이지에 접속할 때, Next Server는 브라우저에게 (1) 사전 렌더링된 HTML 파일과 (2) 서버 컴포넌트의 데이터를 포함하고 있는 RSC Payload와 (3) 클라이언트들의 데이터를 포함하고 있는 JS Bundle를 전달하게 된다.
 
-  <img width='500px' src='https://github.com/user-attachments/assets/946f0441-765d-414a-8b79-e558e995e12a'>
+  <img width='700px' src='https://github.com/user-attachments/assets/946f0441-765d-414a-8b79-e558e995e12a'>
 
   > 특정 페이지에 접속하면 브라우저(클라이언트)에 로드되는 파일
 
 - RSC Payload를 자세히 살펴보자.
 - 공통된 레이아웃이 적용되고 있는 인덱스 페이지와 서치 페이지를 순차적으 접속한다고 했을 때, 브라우저(클라이언트)는 루트 레이아웃과 서치바 레이아웃을 두 번이나 중복해서 전달받는 상황이 된다.
 
-  <img width='500px' src='https://github.com/user-attachments/assets/ae1472a8-9c7b-4770-a884-3e5d85d84c06'>
-  <img width='500px' src='https://github.com/user-attachments/assets/5707f581-1b7a-4272-9cfa-297aaef481be'>
-  <img width='500px' src='https://github.com/user-attachments/assets/b21803b3-e4a7-4c90-a3bb-e2cab838a486'>
+  <img width='700px' src='https://github.com/user-attachments/assets/ae1472a8-9c7b-4770-a884-3e5d85d84c06'>
+  <img width='700px' src='https://github.com/user-attachments/assets/5707f581-1b7a-4272-9cfa-297aaef481be'>
+  <img width='700px' src='https://github.com/user-attachments/assets/b21803b3-e4a7-4c90-a3bb-e2cab838a486'>
   
   > 브라우저에서 중복해서 전달받게 되는 레이아웃 컴포넌트
 
@@ -284,7 +284,7 @@ export const dynamic = 'auto'; // 'force-dynamic', 'force-static', 'error'
 - 다시말해 접속 요청을 받은 Next 서버가 브라우저에게 보내주는 여러가지 페이지 데이터들 중에 루트 레이아웃이나 서치바 레이아웃처럼 접속하는 페이지의 레이아웃을 담당하는 RSC Payload의 데이터만 `Client Router Cache`라는 공간에 캐싱하게 된다.
 - 그렇기 때문에 앞으로는 새로운 페이지를 요청할 때에도 이전에 클라이언트 라우터 캐시에 저장해둔 레이아웃들은 그대로 사용하여 마치 캐싱된 데이터처럼 그대로 레이아웃들을 재사용하게 되고, 그 외의 컴포넌트나 기타 등등의 서버 컴포넌트에 해당하는 데이터들은 따로 요청해서 별로도 받아오도록 동작하게 된다.
 
-  <img width='500px' src='https://github.com/user-attachments/assets/a9b1993a-e865-4000-a1ca-805767298959'>
+  <img width='700px' src='https://github.com/user-attachments/assets/a9b1993a-e865-4000-a1ca-805767298959'>
 
   > Client Router Cache를 동작 방식
 
