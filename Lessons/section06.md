@@ -3,17 +3,17 @@
 - OTT 서비스들은 영화나 드라마처럼 아주 큰 용량의 동영상을 굉장히 빠른 속도로 시청할 수 있도록 만들어 주기 때문에 오늘날 굉장히 많은 사람들에게 사랑을 받고 있다.이 모든 것들을 가능케 하는 것이 바로 스트리밍이라는 기술이다.
 - 스트리밍이라는 기술은 서버에서 클라이언트로 어떠한 데이터를 넘겨줘야 될 때 보내줘야하는 데이터의 크기가 너무나도 크거나 또는 서버 측에서 데이터를 준비하는데 걸리는 시간이 꽤나 오래 걸리게 되어서 데이터를 빠르게 전송해주기 어려울 것 같을 때, 전송할 데이터를 여러 개의 조각으로 잘게 쪼갠 다음 쪼개진 작은 용량의 데이터들을 마치 강물에 하나씩 흘려보내듯이 하나하나씩 클라이언트에게 전송하하는 기술을 바로 스트리밍이라고 한다.
 
-  <img width='500px' src=''>
-  <img width='500px' src=''>
+  <img width='700px' src='https://github.com/user-attachments/assets/d5137f40-682e-4101-a9df-f6fe700a533e'>
+  <img width='700px' src='https://github.com/user-attachments/assets/ad4f743e-777a-4be3-a404-ecebe56d75d0'>
 
   > 스트림(stream): 개천, 하천
 
 - 다시 말해서 스트리밍이란 어떠한 강물이나 개천을 통해서 물자를 보내듯 잘게 쪼개진 데이터들을 연속적으로 보내주는 기술을 의미한다.
 - 스트리밍 기술을 이용하면 데이터가 다 불러와 지지 않은 상태에서도 일단 지금까지 전달받은 데이터에 접근할 수 있기 때문에 결과적으로 사용자에게 긴 로딩 없이 굉장히 좋은 사용자 경험을 제공할 수 있다.
 
-  <img width='500px' src=''>
-  <img width='500px' src=''>
-  <img width='500px' src=''>
+  <img width='700px' src='https://github.com/user-attachments/assets/e7a82daa-e941-4978-afa9-06c94d530795'>
+  <img width='700px' src='https://github.com/user-attachments/assets/a232d3b0-d972-44d5-bccd-27cca59e4f7b'>
+  <img width='700px' src='https://github.com/user-attachments/assets/3585d074-ba43-4d1d-9bd7-c93eda98dcc9'>
 
   > HTML 페이지 스트리밍 동작 방식
 
@@ -22,16 +22,19 @@
 - 서치 페이지를 예로 들면 백엔드 서버로부터 비동기적으로 검색 결과 데이터를 불러오는 페이지 컴포넌트는 브라우저로부터 서치 페이지를 요청 받았을 때, `Streaming`을 적용하지 않는다면 포함된 4개의 컴포넌트들 모두 한 번씩 다 렌더링을 마친 이후에 브라우저에게 페이지를 응답하게 될 것이다. 만약 페이지 컴포넌트에서 수행하는 비동기 작업 데이터를 불러오는 작업이 오래 걸리게 될 경우에는 페이지의 응답 자체가 전체적으로 다 느려지게 되는 문제점이 존재했다.
 - 그러나 `Streaming`을 적용하게 되면 비동기적으로 데이터를 불러오고 있는 페이지 컴포넌트의 렌더링 결과는 제외하고 나머지 루트 레이아웃, 서치바 레이아웃, 서치바 컴포넌트 같은 즉시 렌더링할 수 있는 컴포넌트의 결과만 브라우저에게 응답해서 일단 빠르게 화면을 보여주고, 비동기적으로 데이터를 불러오고 있는 페이지 컴포넌트 부분은 로딩바 같은 대체 UI를 보여주고 있다가 뒤늦게 페이지 컴포넌트의 렌더링이 완료되면 그제서야 후속으로 페이지 컴포넌트의 내용을 화면에 렌더링하게 되는 방식으로 동작하게 된다.
 
-  <img width='500px' src=''>
-
+  <img width='700px' src='(https://github.com/user-attachments/assets/1dc899d6-5887-41a3-912e-a873a18dc263'>
+  <img width='700px' src='https://github.com/user-attachments/assets/be68573d-de79-4bd3-9a7e-21a81f154ce6'>
+  
   > 서치 페이지의 컴포넌트 구조
 
 - 스트리밍이란 쉽게 말해 특정 페이지를 렌더링할 때 비동기 작업이 없는 빠르게 렌더링 될 수 있는 컴포넌트들부터 즉시 브라우저에 렌더링한 뒤 비동기 작업을 포함하고 있는 비교적 렌더링 시간이 오래 걸리는 컴포넌트의 렌더링 결과를 뒤늦게 페이지에 보내주게 되는 동작 방식을 `Streaming`이라고 부른다.
 - 이런 Next.js의 `Streaming`은 Dynamic Page에 자주 활용이 된다. Dynamic Page들은 Next.js 서버에서 빌드타임에 생성이 되지 않기 때문에 `Full Route Cache`에는 저장이 되지 않는다. (Static Page만 저장됨) 그렇기 때문에 서치 페이지 같은 다이나믹 페이지들은 브라우저 접속 요청이 들어왔을 때 마다 Next 서버가 페이지의 모든 컴포넌트들을 다 실행해서 페이지를 매번 새롭게 렌더링 해줘야 되기 때문에 이 과정에서 특정 컴포넌트 내부에서 발생하는 서치 API 같은 데이터 페칭이 너무 오래 걸려 버리게 될 경우에 너무 오래 걸려 버리게 될 경우에는 전체 페이지의 응답이 느려지게 되어서 결국에 좋지 않은 사용자 경험을 제공하게 된다.
 - 바로 이런 상황에 Next.js의 스트리밍이 필요하게 된다.
 
-  <img width='700px' src=''>
-  <img width='700px' src=''>
+  <img width='700px' src='https://github.com/user-attachments/assets/28c0853d-6412-4687-a934-4baac580fcf3'>
+  <img width='700px' src='https://github.com/user-attachments/assets/e9cbaed7-4f6e-46e7-b957-44790e89c69a'>
+  <img width='700px' src='https://github.com/user-attachments/assets/c3759e38-631d-41b2-afdb-998b295006dc'>
+  <img width='700px' src='https://github.com/user-attachments/assets/6844367f-c96e-4a7d-b906-1fbda7e479d2'>
 
   > 좋지 않은 사용자 경험을 제공하는 Dynamic 페이지의 단점을 해결하는 Streaming
 
@@ -59,7 +62,7 @@
   ...
   ```
 
-  <img width='500px' src=''>
+  <img width='500px' src='https://github.com/user-attachments/assets/04c0f2bb-1a6a-4f95-a1c7-1529f4d95269'>
 
   > 스크리밍 설정되어 대체 UI가 나오는 보여짐
 
