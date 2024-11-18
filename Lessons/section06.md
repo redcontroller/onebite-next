@@ -210,7 +210,7 @@ export default async function Page({
 
 - 이렇게 해주면 `error.tsx` 파일과 같은 경로에 있거나 하위에 있는 서치 폴더의 페이지에서 오류가 발생하게 되면 에러 컴포넌트가 페이지 컴포넌트 대신에 화면에 출력이 된다. 마치 `Suspense` 컴포넌트의 `fallback` Props로 넘겨지는 대체 UI를 설정하는 것과 비슷하다.
 
-  <img width='700px' src='https://github.com/user-attachments/assets/0051865d-be8e-4a50-a4a4-07d66b570ebd'>
+  <img width='800px' src='https://github.com/user-attachments/assets/0051865d-be8e-4a50-a4a4-07d66b570ebd'>
 
   > 에러가 발생하면 화면에 대신 렌더링되는 error 컴포넌트
 
@@ -250,7 +250,7 @@ export default async function Page({
 
 - 실험을 위해 중단한 서버를 다시 실행하고, 다시 시도 버튼을 눌러도 계속 에러가 발생하고 있는 상황을 볼 수 있을 것이다. 그러한 이유는 에러 컴포넌트에 전달되는 `reset`이라는 메서드는 사실 그냥 브라우저 (클라이언트) 측에서만 현재 서버로부터 전달받은 데이터를 이용해서 화면을 다시 한번 렌더링 해보기만 하는 메서드이기 떄문이다.
 
-  <img width='700px' src='https://github.com/user-attachments/assets/39f8dd29-ade4-45f9-985f-78404ab8c7fe'>
+  <img width='500px' src='https://github.com/user-attachments/assets/39f8dd29-ade4-45f9-985f-78404ab8c7fe'>
 
   > Error의 reset 함수를 실행하는 다시 하기를 실행해도 다시 실행되지 않는 서버 컴포넌트
 
