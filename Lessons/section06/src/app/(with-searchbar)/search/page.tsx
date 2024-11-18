@@ -1,17 +1,11 @@
 import BookItem from '@/components/book-item';
+import BookListSkeleton from '@/components/skeleton/book-list-skeleton';
 import { BookData } from '@/types';
 import { delay } from '@/util/delay';
+import { Suspense } from 'react';
 
-// 특정 페이지의 유형을 강제로 Static 페이지로 설정
-// export const dynamic = 'error'; // force-static
-
-export default async function Page({
-  searchParams,
-}: {
-  searchParams: Promise<{ q: string }>;
-}) {
+async function SearchResult({ q }: { q: string }) {
   await delay(1500); // 1.5초
-  const { q } = await searchParams;
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_API_SERVER_URL}/book/search?q=${q}`,
     { cache: 'force-cache' }
@@ -28,5 +22,21 @@ export default async function Page({
         <BookItem key={book.id} {...book} />
       ))}
     </div>
+  );
+}
+
+// 특정 페이지의 유형을 강제로 Static 페이지로 설정
+// export const dynamic = 'error'; // force-static
+
+export default async function Page({
+  searchParams,
+}: {
+  searchParams: Promise<{ q: string }>;
+}) {
+  const { q } = await searchParams;
+  return (
+    <Suspense key={q || ''} fallback={<BookListSkeleton count={3} />}>
+      <SearchResult q={q || ''} />
+    </Suspense>
   );
 }

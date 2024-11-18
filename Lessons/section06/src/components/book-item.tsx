@@ -17,7 +17,7 @@ export default function BookItem({
       <img src={coverImgUrl} alt="커버" />
       <div>
         <div className={style.title}>{title}</div>
-        <div className={style.title}>{subTitle}</div>
+        <div className={style.subtitle}>{subTitle}</div>
         <br />
         <div className={style.author}>
           {author} | {publisher}
