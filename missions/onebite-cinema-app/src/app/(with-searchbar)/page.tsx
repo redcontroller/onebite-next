@@ -1,6 +1,8 @@
 import MovieItem from '@/components/movie-Item';
 import style from './page.module.css';
 import { MovieData } from '@/types';
+import { Suspense } from 'react';
+import MovieListSkeleton from '@/components/skeleton/movie-list-skeleton';
 
 async function RecoMovies() {
   // 3초 주기로 영화를 변경하기 위해 revalidate 적용
@@ -12,13 +14,14 @@ async function RecoMovies() {
     return <div>오류가 발생했습니다...</div>;
   }
   const movies: MovieData[] = await response.json();
-
   return (
-    <div className={style.reco_container}>
-      {movies.map((movie) => (
-        <MovieItem key={movie.id} {...movie} />
-      ))}
-    </div>
+    <Suspense fallback={<MovieListSkeleton count={3} type="reco" />}>
+      <div className={style.reco_container}>
+        {movies.map((movie) => (
+          <MovieItem key={movie.id} {...movie} />
+        ))}
+      </div>
+    </Suspense>
   );
 }
 
@@ -34,13 +37,17 @@ async function AddMovies() {
   const movies: MovieData[] = await response.json();
 
   return (
-    <div className={style.all_container}>
-      {movies.map((movie) => (
-        <MovieItem key={movie.id} {...movie} />
-      ))}
-    </div>
+    <Suspense fallback={<MovieListSkeleton count={15} type="all" />}>
+      <div className={style.all_container}>
+        {movies.map((movie) => (
+          <MovieItem key={movie.id} {...movie} />
+        ))}
+      </div>
+    </Suspense>
   );
 }
+
+export const dynamic = 'force-dynamic';
 
 export default function Home() {
   return (
