@@ -162,7 +162,7 @@ export default async function Page({
 - 스켈레톤(Skeleton) UI란 뼈대 역할을 하는 UI라고 이해하면 된다. 페이지에 일부 컨텐츠가 로딩이 되는 동안 실제 컨텐츠 대신에 컨텐츠와 비슷하게 생긴 박스 형태의 실루엣 정도를 미리 보여주는 것을 `Skeleton UI`라고 표현한다.
 - 이런 스켈레톤 UI를 사용하면 사용자로 하여금 로딩 시간부터 대략 어떻게 생긴 컨텐츠가 로딩이 끝났을 때 나의 눈앞에 나타나게 될 것인지 예상할 수 있도록 만들어 주기 때문에 훨씬 더 좋은 사용자 경험을 제공할 수 있다.
 
-  <img width='700px' src=''>
+  <img width='700px' src='https://github.com/user-attachments/assets/6141f522-e1ad-441d-8703-07436bc3fc76'>
 
   > Skeleton UI
 
@@ -185,7 +185,7 @@ export default async function Page({
 - 그래서 프로젝트를 직접 진행할 때에는 이런 `Skeleton UI`를 잘 활용하면 좋을 것 같다.
 - 또 한 가지 Tip을 드리면 `React Loading Skeleton`이라는 자동으로 스켈레톤 UI를 만들어주는 라이브러리도 존재한다. 스켈레톤 UI를 직접 퍼블리싱 하기 귀찮다면 이런 라이브러리를 설치해서 애니메이션까지 존재하는 스켈레톤을 한번 사용해 보길 추천한다.
 
-  <img width='700px' src=''>
+  <img width='700px' src='https://github.com/user-attachments/assets/009d8596-bea9-4b59-96db-ddcafa771520'>
 
   > npm: React Loading Skeleton
 
@@ -210,7 +210,7 @@ export default async function Page({
 
 - 이렇게 해주면 `error.tsx` 파일과 같은 경로에 있거나 하위에 있는 서치 폴더의 페이지에서 오류가 발생하게 되면 에러 컴포넌트가 페이지 컴포넌트 대신에 화면에 출력이 된다. 마치 `Suspense` 컴포넌트의 `fallback` Props로 넘겨지는 대체 UI를 설정하는 것과 비슷하다.
 
-  <img width='700px' src=''>
+  <img width='700px' src='https://github.com/user-attachments/assets/0051865d-be8e-4a50-a4a4-07d66b570ebd'>
 
   > 에러가 발생하면 화면에 대신 렌더링되는 error 컴포넌트
 
@@ -250,7 +250,7 @@ export default async function Page({
 
 - 실험을 위해 중단한 서버를 다시 실행하고, 다시 시도 버튼을 눌러도 계속 에러가 발생하고 있는 상황을 볼 수 있을 것이다. 그러한 이유는 에러 컴포넌트에 전달되는 `reset`이라는 메서드는 사실 그냥 브라우저 (클라이언트) 측에서만 현재 서버로부터 전달받은 데이터를 이용해서 화면을 다시 한번 렌더링 해보기만 하는 메서드이기 떄문이다.
 
-  <img width='700px' src=''>
+  <img width='700px' src='https://github.com/user-attachments/assets/39f8dd29-ade4-45f9-985f-78404ab8c7fe'>
 
   > Error의 reset 함수를 실행하는 다시 하기를 실행해도 다시 실행되지 않는 서버 컴포넌트
 
@@ -346,7 +346,7 @@ return (
 - 만약 서치 페이지만의 별도의 에러 컴포넌트가 필요하다라고 하면, 서치 페이지 컴포넌트의 경로에 별도의 `error.tsx` 파일을 만들어주면 된다.
 - 따로 만들어준 `error.tsx` 파일은 상위에 있는 `error.tsx` 파일을 덮어 씌워 대체하게 된다.
 
-  <img width='700px' src=''>
+  <img width='500px' src='https://github.com/user-attachments/assets/0ecf66b3-1213-46ef-ac2b-05144ea8d420'>
 
   > 별도의 에러 페이지 컴포넌트로 서치 페이지의 에러 핸들링
 
@@ -356,7 +356,7 @@ return (
 - 인덱스 페이지에서 발생한 오류 화면을 보면 서치바 레이아웃이 렌더링 되지 않은 걸 볼 수 있다.
 - `error.tsx` 파일은 자기와 같은 경로에 있는 레이아웃까지만 렌더링을 시켜주기 때문이다.
 
-  <img width='700px' src=''>
+  <img width='500px' src='https://github.com/user-attachments/assets/f6b5ec79-94ae-4ddb-a384-61d8bda22c73'>
 
   > 서치바 레이아웃은 생략되고 최상위 레이아웃까지만 렌더링된 `app/error.tsx` 파일 배치 결과
 
