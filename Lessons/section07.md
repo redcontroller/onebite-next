@@ -7,15 +7,16 @@
 - Next.js의 서버 액션은 클라이언트인 브라우저에서 특정 `Form`의 제출 이벤트가 발생했을 때 서버에서만 실행되는 함수를 브라우저가 직접 호출하면서 데이터까지 `FormData` 형식으로 전달할 수 있게 해주는 기능이다.
 - 기존에 API를 통해서만 진행했어야 하는 브라우저와 서버 간의 데이터 통신을 오직 JavaScript 함수 하나마느로 굉장히 쉽고 간결하게 설정할 수 있기 떄문에 `서버 액션`은 오늘날 상당히 강력하고 훌륭한 기능으로 많은 주목을 받고 있는 상황이다.
 
-  <img width='500px' src='' />
+  <img width='500px' src='https://github.com/user-attachments/assets/98899d49-bc20-4250-874a-0b4dbda6bc7e' />
+  <img width='500px' src='https://github.com/user-attachments/assets/eefe08ec-30fe-4ff0-816c-1bd612ed6d4b' />
 
-  > 서버 액션 예시 코드
+  > 서버액션과 서버액션 예시 코드
 
 - 간단하게 아래와 같이 form 태그를 만들고, 간단한 데이터를 입력 후 submit 버튼을 눌러보면 개발자 모드의 네트워크 탭에서 브라우저 요청이 발생한 것을 볼 수 있다.
 - 그렇기 때문에 서버 측 콘솔인 VSCode 터미널에 console.log로 출력한 메시지가 출력된 것을 확인할 수 있다.
 
-  <img width='700px' src='' />
-  <img width='500px' src='' />
+  <img width='500px' src='https://github.com/user-attachments/assets/ad2eaf40-fb6c-43f9-97fd-a77b09ccebaa' />
+  <img width='800px' src='https://github.com/user-attachments/assets/140f2daa-804f-43c3-8017-f8e5b6dd76e2' />
 
   > 서버 액션으로 발생한 요청
 
@@ -41,8 +42,8 @@
 - 그리고 `Headers`에는 휠을 조금 내려보면 `Request Headers`가 있는데, `Next-Action`이 해시값이 설정되어 있는 것을 확인할 수 있다. 이를 통해 알 수 있는 추가적인 사실은 우리가 코드상에 `"use server"` 지시자를 통해서 서버 액션을 만든 다음, 해당하는 서버 액션을 호출하는 폼을 브라우저 측에서 제출하게 되면 자동으로 서버 액션을 호출하는 HTTP 요청이 서버에 전송되게 된다. 이런 서버 액션들은 컴파일 결과 자동으로 특정한 해시값을 갖는 API로서 설정이 되기 때문에 브라우저 측에서 서버 액션을 호출할 때 `Response Headers`의 `Next-Action`이라는 이름으로 혀재 호출하고자 하는 서버 액션의 해시값까지 함께 명시가 된다.
 - 쉽게 설명하면 서버 액션을 만들게 되면 서버 액션 코드를 실행하는 API가 하나 자동으로 생성이 되고, 그 API는 브라우저에서 FormData를 제출했을 때 자동으로 호출이 된다.
 
-  <img width='500px' src='' />
-  <img width='500px' src='' />
+  <img width='500px' src='https://github.com/user-attachments/assets/71e9cfa6-390b-415f-937e-d7e2300949b2' />
+  <img width='500px' src='https://github.com/user-attachments/assets/5ba6f72e-6337-4cdc-836c-71d8da912715' />
 
   > 서버 액션으로 발생한 요청 자세히 살펴보기: Headers
 
@@ -63,9 +64,10 @@
   }
   ```
 
-  <img width='500px' src='' />
-  <img width='500px' src='' />
-
+  <img width='500px' src='https://github.com/user-attachments/assets/1e6f9563-6771-4c4c-8876-29ba0db2859b' />
+  <img width='500px' src='https://github.com/user-attachments/assets/c6a5d8c1-f382-4d98-97d6-60521eb6a129' />
+  <img width='500px' src='https://github.com/user-attachments/assets/7d5b3db3-7ff2-47f6-9d4b-32f94e97b000' />
+  
   > 서버 액션으로 발생한 요청 자세히 살펴보기: Payload
 
 - 한 가지 주의해야할 점은 위 서버 액션 코드에서 content나 author 변수의 타입이 `formDataEntryValue | null` 타입으로 추론이 되는 것을 확인할 수 있다. `formDataEntryValue` 타입은 string이나 file 타입을 의미하기 때문에 string 값을 전달받고 있는 상황에서는 적절하지 않다. 이럴 때는 해당 값이 있을 때에만 문자열 타입으로 변환하도록 설정하면 된다.
@@ -74,8 +76,8 @@
   function ReviewEditor() {
     async function createReviewAction(formData: FormData) {
       'use server';
-      const content = formData.get('content')?.toString();
-      const author = formData.get('author')?.toString();
+      const content = formData.get('content')?.toString(); // 값이 존재하면 문자열 타입으로 변환
+      const author = formData.get('author')?.toString(); // 값이 존재하면 문자열 타입으로 변환
 
       console.log(formData);
       console.log(`리뷰 내용: ${content},\n작성자: ${author}`);
@@ -141,7 +143,7 @@
 - 리뷰를 새로 생성해서 DB에 추가했지만, 불러오는 기능을 만들지 않아서 확인할 수가 없다. 일단은 실행하고 있는 백엔드 서버를 실행하고 있는 VSCode 터미널을 하나 더 열고, `npx prisma studio`를 통해 현재 데이터베이스에 저장된 데이터에서 새롭게 추가한 리뷰 데이터를 확인할 수 있다.
 - 참고로 ID 값은 일련번호처럼 붙는 것이기 때문에 크게 중요하지 않다.
 
-  <img width='700px' src='' />
+  <img width='800px' src='https://github.com/user-attachments/assets/e88a12a1-94e6-4ac2-ba99-a7bdfbcfea36' />
 
   > 서버 액션으로 DB 추가한 리뷰 데이터를 Prisma Studio를 통해 확인
 
@@ -197,7 +199,7 @@
 - 그런데 input 태그에 `hidden` 속성을 적용하면 에러가 발생하는데, input 태그 값인 value를 제공하고 있지만 onChange 핸들러가 없어서 발생하는 것이다. 이는 Next App이 값만 있고 이벤트 핸들러가 없기 때문에 값만 있고 바꿀 수 있는 있는 방법이 없는 잘못 만든 input 태그가 아니냐는 의미로 에러를 발생시킨 것이다.
 - 사실상 프로젝트의 기능에 문제를 끼치거나 악영햐을 미치는 그런 큰 오류는 아니다. 무시해도 괜찮긴 하지만 에러 메시지를 없애고자 한다면 이 경우에는 `readOnly` 속성을 추가해주면 된다. 그렇기 때문에 앞으로 `hidden` 애트리뷰트가 있다면 모두 `readOnly`를 추가하면 된다.
 
-  <img width='700px' src='' />
+  <img width='700px' src='https://github.com/user-attachments/assets/420485a1-3c40-4052-866e-2a9d37684397' />
 
   > input 태그를 'hidden'으로 만들면 발생하는 에러
 
