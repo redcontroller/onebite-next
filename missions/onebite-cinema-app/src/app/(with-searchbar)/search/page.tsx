@@ -16,7 +16,6 @@ async function SearchResult({ q }: { q: string }) {
     return <div>오류가 발생했습니다...</div>;
   }
   const movies: MovieData[] = await response.json();
-  console.log(movies);
 
   return (
     <>
