@@ -39,7 +39,7 @@
   ```
 
 - 서버 액션의 요청을 자세히 살펴보면 네트워크 탭에서 요청의 `Headers`를 살펴보면 Next 서버의 주소인 `http://localhost:3000/book/11`으로 `Post` 요청이 전송된 것을 확인할 수 있다.
-- 그리고 `Headers`에는 휠을 조금 내려보면 `Request Headers`가 있는데, `Next-Action`이 해시값이 설정되어 있는 것을 확인할 수 있다. 이를 통해 알 수 있는 추가적인 사실은 우리가 코드상에 `"use server"` 지시자를 통해서 서버 액션을 만든 다음, 해당하는 서버 액션을 호출하는 폼을 브라우저 측에서 제출하게 되면 자동으로 서버 액션을 호출하는 HTTP 요청이 서버에 전송되게 된다. 이런 서버 액션들은 컴파일 결과 자동으로 특정한 해시값을 갖는 API로서 설정이 되기 때문에 브라우저 측에서 서버 액션을 호출할 때 `Response Headers`의 `Next-Action`이라는 이름으로 혀재 호출하고자 하는 서버 액션의 해시값까지 함께 명시가 된다.
+- 그리고 `Headers`에는 휠을 조금 내려보면 `Request Headers`가 있는데, `Next-Action`이 해시값이 설정되어 있는 것을 확인할 수 있다. 이를 통해 알 수 있는 추가적인 사실은 우리가 코드상에 `"use server"` 지시자를 통해서 서버 액션을 만든 다음, 해당하는 서버 액션을 호출하는 폼을 브라우저 측에서 제출하게 되면 자동으로 서버 액션을 호출하는 HTTP 요청이 서버에 전송되게 된다. 이런 서버 액션들은 컴파일 결과 자동으로 특정한 해시값을 갖는 API로서 설정이 되기 때문에 브라우저 측에서 서버 액션을 호출할 때 `Request Headers`의 `Next-Action`이라는 이름으로 현재 호출하고자 하는 서버 액션의 해시값까지 함께 명시가 된다.
 - 쉽게 설명하면 서버 액션을 만들게 되면 서버 액션 코드를 실행하는 API가 하나 자동으로 생성이 되고, 그 API는 브라우저에서 FormData를 제출했을 때 자동으로 호출이 된다.
 
   <img width='500px' src='https://github.com/user-attachments/assets/71e9cfa6-390b-415f-937e-d7e2300949b2' />
@@ -213,7 +213,17 @@
     throw new Error(`Review fetch failed : ${response.statusText}`);
   }
   ```
-- 서버액션의 결과를 저장하는 변수 response의 타입을 보면 `any`타입으로 추론되는 것을 볼 수 있다. 나중에 타입 오류가 발생할 가능성이 매우 높기 때문에 서버액션의 응답값의 타입을 정의해두는 것이 좋다. 응답값에 어떤 속서들이 있는지 모를 때는 API 문서를 통해서 확인해 볼 수 있다. 이렇게 정의한 타입을 response에 적용해주면 타입 오류에서 보다 안전해질 수 있다.
+- 서버액션의 결과를 저장하는 변수 response의 타입을 보면 `any`타입으로 추론되는 것을 볼 수 있다. 나중에 타입 오류가 발생할 가능성이 매우 높기 때문에 서버액션의 응답값의 타입을 정의해두는 것이 좋다. 응답값에 어떤 속성들이 있는지 모를 때는 API 문서를 통해서 확인해 볼 수 있다. 이렇게 정의한 타입을 response에 적용해주면 타입 오류에서 보다 안전해질 수 있다.
+  ```typescript
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_API_SERVER_URL}/review/book/${bookId}`,
+    { next: { tags: [`review-${bookId}`] } }
+  );
+  if (!response.ok) {
+    throw new Error(`Review fetch failed : ${response.statusText}`);
+  }
+  const reviews: ReviewData[] = await response.json();
+  ```
 
 ## 리뷰 재검증 구현하기
 
@@ -231,10 +241,10 @@
 - 브라우저에서 북 페이지 1번에서 리뷰를 작성해보고 `Full Route Cache`된 HTML 파일을 비교해보면, 브라우저에서는 내가 작성한 리뷰가 새롭게 렌더링 되어 바로 보이지만 `Full Route Cache`된 `1.html` 파일에서는 추가된 내용이 보이지 않는다.
 - 결론적으로 `Full Route Cache`가 제거만 됐을 뿐 새롭게 다시 업데이트 되지는 않았다.
 
-  <img width='700px' src='' />
-  <img width='700px' src='' />
+  <img width='800px' src='https://github.com/user-attachments/assets/fcd2d508-82cc-46b3-ab75-211f1e76e0d9' />
+  <img width='600px' src='https://github.com/user-attachments/assets/17b8d62e-0187-4869-a6de-92d70509cd7b' />
 
-  > `revalidatePath`로 새로 작성한 리뷰가 반영 안되는 Full Route Cache (저장된 북 페이지의 리뷰)
+  > `revalidatePath`로 인해 Full Route Cache에 반영되지 않은 신규 작성 리뷰 (저장된 북 페이지의 리뷰)
 
 - 이러한 현상은 `revalidatePath`라는 메서드는 `Full Route Cache`를 삭제, 즉 무효화하기만 할 뿐만 아니라 새롭게 생성된 페이지를 다시 `Full Route Cache`에 저장해주지는 않기 때문이다.
 - 그래서 기존의 `.next/server/app/book/`폴더에 `Full Route Cache`로써 저장되어 있던 페이지는 사실상 무효화된, 삭제된 캐시인 것이다.
@@ -246,8 +256,8 @@
 - 여기서 주의해야 할 점은 revalidate(최신화) 한 직후에는 `Full Route Cache`에는 페이지가 새롭게 업데이트 되지 않는다. 대신에 이 페이지는 모든 과정이 다 종료되고 브라우저로부터 다음번의 접속 요청이 들어오면 그때 실시간으로 다시 한번 페이지를 생성해서 `Full Route Cache`에 저장이 된다. 다음번에 요청이 있을 때에는 다이나믹 페이지처럼 실시간으로 페이지가 만들어져야 돼서 **비교적으로 느린 응답이 이루어질 수 있다는 주의사항**이 있다.
 - \* Purge: 숙청하다. 깨끗이 하다. 일소하다.
 
-  <img width='700px' src='' />
-  <img width='700px' src='' />
+  <img width='800px' src='https://github.com/user-attachments/assets/199c4db6-195b-494e-8df2-271b5e5b1218' />
+  <img width='800px' src='https://github.com/user-attachments/assets/48701e31-55a3-455d-b8d6-fa05cc41a557' />
 
   > `revalidatePath`가 동작하는 정적 페이지의 작동
 
@@ -319,7 +329,7 @@
 - 만약 2초 정도 딜레이가 발생하는 서버액션이었다면, 2초라는 시간 동안 사용자들에게는 어떠한 피드백도 제공이 되지 않기 때문에 사용자의 입장에서는 조금도 답답하게 느껴질 수 밖에 없다. 더 큰 문제는 2초 동안 멈춰있는 동안에 여러번 작성하기 버튼을 클릭해서 form을 중복으로 제출하는 것에도 전혀 방지가 되어 있지 않기 때문에 중복으로 form 제출이 연달아서 발생한다.
 - 이것은 굉장히 큰 문제이다. 지금은 2초 딜레이 동안 버튼을 3 번만 눌렀지만 만약 성질이 급한 사용자가 있었다면 중복 제출을 약 100번정도 수행했을 수도 있다.
 
-  <img width='500px' src='' />
+  <img width='500px' src='https://github.com/user-attachments/assets/3f712dde-2c98-44cc-b38f-97fc7ba7c843' />
 
   > 2초 딜레이로 응답이 없어 버튼을 통해 form 중복이 제출된 상황
 
@@ -408,7 +418,7 @@
 - hidden으로 설정된 input 태그의 경우 그저 bookId를 formData로 전달하기 위해서 존재하는 인풋 태그였기 때문에 어차피 보이지 않는다. 그래서 disabled 속성을 굳이 설정하지 않아도 된다.
 - 다시 작성하기 버튼을 눌러 2초의 delay 함수가 적용되어 있는 서버액션을 실행하면 로딩 상태에 버튼과 textarea, input 태그의 상태가 비활성화 되는 것을 확인할 수 있다. 또한 비활성화 상태로 인해서 여러 번 클릭한다고 하더라도 중복 제출이 방지되어 서버에 딱 하나의 서버 액션만 호출이 된다.
 
-  <img width='500px' src='' />
+  <img width='500px' src='https://github.com/user-attachments/assets/cf4e9ba2-6355-4d9b-ac31-2d85a0cc9eb0' />
 
   > 로딩 상태를 적용한 ReviewEditor 컴포넌트 UI
 
