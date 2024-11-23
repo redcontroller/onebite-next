@@ -63,10 +63,10 @@ export default async function Page({
 }
 ```
 
-- App Router에서 동적 페이지와 URL 파라미터를 사용하는 book 페이지 설정 (Optional catch all segment)
-- /book/[id] 폴더의 경우 바로 하위 경로까지만 포함 (ex. /book/1, /book/100)
-- /book/[...id] 폴더의 경우 하위 모든 경로를 포함 (ex. /book/1/1, /book/1/100/1000)
-- /book/[[...id]] 폴더의 경우 URL 파라미터가 아예 존재하지 않는 경로까지 모두 포함 (ex. /book, /book/1, /book/1/2)
+- App Router에서 동적 페이지와 URL 파라미터를 사용하는 book 페이지 설정
+  - **Dynamic Route**: `/book/[id]` 폴더의 경우 바로 하위 경로까지만 포함 (ex. /book/1, /book/100)
+  - **Catch all segments**: `/book/[...id]` 폴더의 경우 하위 모든 경로를 포함 (ex. /book/1/1, /book/1/100/1000)
+  - **Optional catch all segments**: `/book/[[...id]]` 폴더의 경우 URL 파라미터가 아예 존재하지 않는 경로까지 모두 포함 (ex. /book, /book/1, /book/1/2)
 
 ```tsx
 // /src/app/book/[[...id]]/page.tsx
