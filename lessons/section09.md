@@ -26,7 +26,8 @@
 - 두번째 문제점은 현재 화면에 렌더링될 필요가 없는 이미지들까지 한꺼번에 불러오고 있다. 현재 화면의 Viewport 상에서는 보여지는 이미지는 5개밖에 없는데 네트워크 탭에 보면 페이지에 포함이 되는 모든 이미지를 다 한번에 불러오고 있다는 점이다. 그렇기 때문에 현재 필요한 이미지들부터 빠르게 불러와 지는 것이 아니라 불필요하게 많은 이미지들을 동시에 불러오게 된다.
 - 서번째 문제점은 불러고 오고 있는 이미지들의 사이즈가 실제 화면에 나타날 사이즈보다 훨씬 더 크다는 점이다. 네트워크 탭에서 로딩된 이미지를 클릭하고 `preview` 탭에서 현재 불러온 이미지의 정보를 자세히 살펴볼 수 있다. 오른쪽 하단 부분에 이미지의 용량과 사이즈가 나타나는 것을 볼 수 있다. 이때 이미지 사이즈가 `458x583` 픽셀로 굉장히 거대한 사이즈의 이미지를 불러오고 있다는 걸 알 수 있다. 불러온 이미지의 큰 사이즈에 비해서 실제 브라우저 화면에 렌더링된 이미지의 사이즈인 `80x105` 픽셀 (코드 상에서 CSS로 설정한 값)로 사실상 4배 가까운 사이즈로 이미지를 불러오고 있다. 불러와야 하는 이미지도 사이즈에 비례해서 굉장히 커져 버릴 수 있기 때문에 이런 이미지가 하나둘씩 쌓이다 보면 큰 성능 악화로 이어질 수 있다.
 
-  <img width="700px" src="">
+  <img width="700px" src="https://github.com/user-attachments/assets/313f887e-5f3c-4bd7-a33d-74357c79458d">
+  <img width="700px" src="https://github.com/user-attachments/assets/043f9e07-a0ba-4e84-81d5-7023ee255426">
 
   > 개발자 모드 Network 탭 하위 이미지 Preview 화면
 
@@ -45,7 +46,7 @@
 - `img` 태그 대신에 `Image 컴포넌트`를 사용하여 코드를 수정해줬다면, 이제 대부분의 최적화 기법들을 다 자동으로 적용이 되었을 것이다.
 - 그런데 오류가 발생한다. `Invalid src prop`이라고 해서 이미지 컴포넌트에 사용한 src 이미지의 주소를 Next.js 이미지 컴포넌트에서 사용하려면 next.config.js에 몇 가지 설정을 추가해줘야 된다는 메시지를 볼 수 있다.
 
-  <img width="700px" src="">
+  <img width="700px" src="https://github.com/user-attachments/assets/05f1db9b-070a-49ea-8809-9c92396bab39">
 
   > 이미지 컴포넌트를 사용하며 발생한 Invalid src prop 에러
 
@@ -70,9 +71,8 @@
 
 - 다시 브라우저의 새로고침을 한 뒤 네트워크 탭에서 다시 어떤 점이 달라졌는지 확인해 보면, 우선 불러오고 있는 타입이 더 이상 `jpeg` 형식이 아닌 `webp` 형식으로 변환이 되어서 훨씬 더 경량화된 형태로 이미지가 불러온다. 그리고 이미지들의 사이즈가 가장 큰 것이 4 KB 정도밖에 안될 정도록 굉장히 작은 용량으로 이미지를 불러오고 있는 걸 확인할 수 있다.
 
-  <img width="500px" src="">
-  <img width="500px" src="">
-  <img width="500px" src="">
+  <img width="500px" src="https://github.com/user-attachments/assets/c843f625-4b0f-4d0a-897a-e2651de191f9">
+  <img width="500px" src="https://github.com/user-attachments/assets/bafa7d10-ec49-449a-a734-85cd02e346aa">
 
   > 이미지 컴포넌트를 사용한 뒤 변화된 이미지
 
@@ -111,7 +111,7 @@
     return (
   ```
 
-  <img width="700px" src="">
+  <img width="700px" src="https://github.com/user-attachments/assets/075309a4-95b8-427f-ad44-15db43fdc4f7">
 
   > 인덱스 페이지를 개발자 모드 Elements 탭에서 head 태그 속의 메타데이터 확인
 
@@ -176,7 +176,7 @@
   }
   ```
 
-  <img width="700px" src="">
+  <img width="700px" src="https://github.com/user-attachments/assets/1a68f036-9fd6-4b0f-9bb4-9f7be0212fb3">
 
   > 북 페이지를 개발자 모드 Elements 탭에서 head 태그 속의 메타데이터 확인
 
@@ -203,7 +203,7 @@
 - 백엔드 서버의 경우 Page Router 버전에서 배포했던 onebite-books-server를 그대로 사용한다.
 - `Vercel`에 프로젝트를 배포하면 빌드 로그를 확인할 수 있다. 그리고 배포가 완료되면 Status & Ready라고 해서 프로덕션 모드로 배포가 완료되었다고 표시해주는 것을 확인할 수 있다. 그리고 현재 배포된 프로젝트의 배포 주소까지 알려준다.
 
-  <img width="700px" src="">
+  <img width="700px" src="https://github.com/user-attachments/assets/ff90ca65-12cc-458f-985c-9581d3d101c0">
 
   > 배포된 백엔드 프로젝트의 vercel 페이지
 
@@ -216,8 +216,8 @@
   - ? In which directory is your code located? ./
   - ? Want to modify these settings? N
 
-  <img width="600px" src=">
-  <img width="700px" src=">
+  <img width="700px" src="https://github.com/user-attachments/assets/e66d4315-da27-4f7f-9202-c842b3778cd6">
+  <img width="600px" src="https://github.com/user-attachments/assets/a5d8c644-6c79-4925-addc-94d7545a52be">
 
   > 터미널 상의 배포 옵션과 빌드 에러
 
@@ -228,20 +228,20 @@
 - 그리고 배포된 `onebite-books-app` 프로젝트의 Vercel 페이지에서 `setting` 탭에 들어가보면 `Environment Variables`라고 해서 환경 변수를 설정하는 섹션이 있는 것을 볼 수 있다.
 - 해당 섹션에서 새로운 환경 변수를 추가해주면 된다. `.env` 파일에서와 같은 `NEXT_PUBLIC_API_SERVER_URL`을 key로 하고 value를 `https://`를 포한하여 공백없이 배포한 백엔드 API 서버 URL을 붙여넣어주면 된다.
 
-  <img width="700px" src=">
+  <img width="700px" src="https://github.com/user-attachments/assets/d98cd851-130b-4362-886e-e6a78babceb9">
 
   > Vercel 환경변수 설정
 
 - 환경변수도 다시 설정해주고, `Deployments` 탭에서 빌드에 실패했던 항복의 더보기 메뉴에서 `redeploy`를 선택해서 다시한번 빌드를 실행하고 재배포 결과를 확인해볼 수 있다. `Redeploy`를 누르면 모달창이 하나 뜨는데 그냥 `Redeploy` 버튼을 클릭해주면 된다.
 
-  <img width="700px" src=">
-  <img width="700px" src=">
+  <img width="700px" src="https://github.com/user-attachments/assets/4096fa8a-a97c-4c1d-a925-2c8440758f76">
+  <img width="700px" src="https://github.com/user-attachments/assets/20ac113b-ca3a-461b-b885-03a5482f90df">
 
   > Vercel deployments 탭에서 Redeploy
 
 - 프로젝트 배포가 성공하면 Domains 밑의 URL을 통해서 배포한 프로젝트에 접속할 수 있다. 그리로 배포 ULR을 카카오톡 같은 SNS에 서비스의 주소를 붙여넣어 보면 조금 로딩이 걸릴 순 있지만 한입북스 썸네일 이미지와 함께 openGraph 태그까지 잘 적용이 된 것을 확인할 수 있다.
 
-  <img width="700px" src=">
+  <img width="400px" src="https://github.com/user-attachments/assets/6994ae42-fe53-48d8-81d2-1157e7a57058">
 
   > 카카오톡과 같은 SNS에서 보여지는 openGraph
 
@@ -275,21 +275,21 @@
 
 - 배포 결과를 페이비벼로 확인해보면 이제 인덱스 페이지는 `Static Page`로 잘 제공이되고 있고, `/book/[id]`의 도서 상세 페이지의 경우 12개의 등록된 모든 도서 페이지가 전부 정적으로 빌드 타임에 미리 생성이 된 것을 볼 수 있다. 배포 서비스를 새로고침만 해보아도 개선 전과 달리 매우 빠른 페이지 응답성을 보임을 확인할 수 있다.
 
-  <img width="700px" src=">
+  <img width="700px" src="https://github.com/user-attachments/assets/9b5304c1-9b51-4724-b86b-809b1a512995">
 
   > 개선 후 페이지별 배포 결과 확인
 
 - 사실 `Vercel`을 통해서 프로젝트를 배포한 상황이라면 코드 상에서 할 수 있는 최적화 말고도 Vercel 플랫폼에서 진행할 수 있는 추가적인 최적화 방법이 존재한다.
 - 배포한 프로젝트 페이지에서 환경변수를 설정했었던 `Setting` 탭에 들어가면 `functions`라는 섹션이 있다. 최상단에 `Function Region`을 설정할 수 있는 공간이 있는 것을 알 수 있다. `Function Region`이 무엇이냐면 Next App의 페이지들이 어떠한 Region (물리적 장소)에서 제공이 될 것인지 결정하는 섹션이다. 기본값이 `Washington, D.C, USA`이 되어 있는 것을 `Asia pacific`에 `Seoul, South Korea`로 설정해준다. Region을 변경한 후에는 다시 한번 배포를 해줘야 한다. 즉, 프로젝트의 터미널에 `vercel --prod` 명령어를 입력해줘야 한다. 배포가 되면 이제 물리적으로 미국보다 가까운 우리나라 서울에서부터 서비스의 페이지들이 응답이 될 것이다.
 
-  <img width="700px" src=">
-  <img width="700px" src=">
+  <img width="700px" src="https://github.com/user-attachments/assets/2a37f077-6368-455b-a3a8-33dbf3b32848">
+  <img width="700px" src="https://github.com/user-attachments/assets/0340c615-1853-451f-be54-cfb4ea130f43">
 
   > Vercel의 Function Region 설정의 변경
 
 - 재배포가 완료되면 네트워크 탭을 열고 특정 도서의 페이지로 들어가보면 Next 서버로부터 받은 네트워크 리퀘스트들을 확인할 수 있다. 이때 가장 처음으로 전달받은 응답의 리스폰스를 확인해보면 아래 `Response Headers` 섹션에 `X-Vercel-Id` 값을 확인할 수 있는데 제일 앞에 Region이 명시가 되어 있다. ICN1이라는 Region이 서울을 의미한다. 이렇게 Region까지 바꿔주면 조금이라도 더 사용자들에게 빠르게 페이지를 공급해줄 수 있다.
 
-  <img width="700px" src=">
-  <img width="700px" src=">
+  <img width="700px" src="https://github.com/user-attachments/assets/72347459-b2b3-4de1-b750-f6eb1266c6e6">
+  <img width="700px" src="https://github.com/user-attachments/assets/59773372-25eb-48b4-852b-8be8adcad898">
 
   > 평균 온라인 강의 완강률과 완강 화면
